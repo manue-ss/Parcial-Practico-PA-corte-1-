@@ -10,6 +10,17 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
-        <div>TODO write content</div>
+        <article>
+            <h1>Inicio de sesion</h1>
+                <form action="LoginServlet" method="post">
+                    <label for="username">Usuario:</label>
+                    <input type="text" id="username" name="username" required><br><br>
+                    <label for="password">Contraseña:</label>
+                    <input type="password" id="password" name="password" required><br><br>
+                    <input type="submit" value="Iniciar Sesión">
+                    <a href="">Registrarse</a>
+                    <a href="">Olvide mi contraseña</a>
+                </form>
+        </article>
     </body>
 </html>
