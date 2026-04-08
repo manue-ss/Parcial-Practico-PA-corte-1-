@@ -16,7 +16,8 @@
                     role="form"
                     aria-label="Inicio de sesión">
                     <h1>Inicio de sesion</h1>
-                    <span>Use su correo electrónico</span><br /><br />
+                    <span>Use su correo electrónico o nombre de usuario</span
+                    ><br />
                     <div class="input-container">
                         <ion-icon name="person-circle-outline"></ion-icon>
                         <input
@@ -50,7 +51,16 @@
                     role="form"
                     aria-label="Registro de usuario">
                     <h1>Registro</h1>
-                    <span>Use su correo electrónico</span><br /><br />
+                    <span>Usa tus datos personales para registrarte</span><br />
+                    <div class="input-container">
+                        <ion-icon name="person-outline"></ion-icon>
+                        <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            placeholder="Nombre Completo"
+                            required />
+                    </div>
                     <div class="input-container">
                         <ion-icon name="person-circle-outline"></ion-icon>
                         <input
@@ -96,16 +106,22 @@
 
             <section class="card-welcome">
                 <div class="welcome-singup welcome">
-                    <h3>Bienvenido</h3>
-                    <p>Ingrese su usuario y contraseña para acceder</p>
-                    <button class="button" id="btn-singup">
-                        Registrarse
-                    </button>
+                    <h3>¡Hola Denuevo!</h3>
+                    <p>
+                        Si es tu primera vez, registrate con tus datos
+                        personales
+                    </p>
+                    <button class="button" id="btn-singup">Registrarse</button>
                 </div>
                 <div class="welcome-login welcome">
-                    <h3>Bienvenido</h3>
-                    <p>Regístrese para crear una nueva cuenta</p>
-                    <button class="button" id="btn-login">Iniciar Sesión</button>
+                    <h3>¡Bienvenido!</h3>
+                    <p>
+                        ¿Ya eres un usuario de nuestro servicio?, inicia sesión
+                        con tus datos para ingresar
+                    </p>
+                    <button class="button" id="btn-login">
+                        Iniciar Sesión
+                    </button>
                 </div>
             </section>
         </article>
