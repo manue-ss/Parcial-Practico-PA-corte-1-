@@ -1,0 +1,13 @@
+# Visual Studio Code workspace/user settings
+.vscode/
+
+# NetBeans private project settings
+nbproject/private/
+
+# Build artifacts and temporary files
+build/
+*.class
+
+# OS generated files
+.DS_Store
+Thumbs.db
