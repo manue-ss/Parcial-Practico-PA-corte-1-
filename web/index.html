@@ -1,26 +1,105 @@
-<!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
--->
-<html>
+<!doctype html>
+<html lang="es">
     <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Login</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="css/login-style.css" />
     </head>
     <body>
-        <article>
-            <h1>Inicio de sesion</h1>
-                <form action="LoginServlet" method="post">
-                    <label for="username">Usuario:</label>
-                    <input type="text" id="username" name="username" required><br><br>
-                    <label for="password">Contraseña:</label>
-                    <input type="password" id="password" name="password" required><br><br>
-                    <input type="submit" value="Iniciar Sesión">
-                    <a href="">Registrarse</a>
-                    <a href="">Olvide mi contraseña</a>
+        <article class="card">
+            <section class="card-form">
+                <form
+                    class="form-login"
+                    action="LoginServlet"
+                    method="post"
+                    role="form"
+                    aria-label="Inicio de sesión">
+                    <h1>Inicio de sesion</h1>
+                    <span>Use su correo electrónico</span><br /><br />
+                    <div class="input-container">
+                        <ion-icon name="person-circle-outline"></ion-icon>
+                        <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            placeholder="Usuario o Correo Electrónico"
+                            required />
+                    </div>
+                    <div class="input-container">
+                        <ion-icon name="lock-closed-outline"></ion-icon>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Contraseña"
+                            required />
+                    </div>
+                    <a href="">¿Olvidaste tu contraseña?</a>
+                    <input
+                        type="submit"
+                        value="Iniciar Sesión"
+                        class="button" />
                 </form>
+            </section>
+            <section class="card-form">
+                <form
+                    class="form-singup"
+                    action="SingupServlet"
+                    method="post"
+                    role="form"
+                    aria-label="Registro de usuario">
+                    <h1>Registro</h1>
+                    <span>Use su correo electrónico</span><br /><br />
+                    <div class="input-container">
+                        <ion-icon name="person-circle-outline"></ion-icon>
+                        <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            placeholder="Nombre de Usuario"
+                            required />
+                    </div>
+                    <div class="input-container">
+                        <ion-icon name="mail-outline"></ion-icon>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="Correo electrónico"
+                            required />
+                    </div>
+                    <div class="input-container">
+                        <ion-icon name="call-outline"></ion-icon>
+                        <input
+                            type="tel"
+                            id="phone"
+                            name="phone"
+                            pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+                            placeholder="Número de teléfono"
+                            required />
+                    </div>
+
+                    <div class="input-container">
+                        <ion-icon name="lock-closed-outline"></ion-icon>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Contraseña"
+                            required />
+                    </div>
+
+                    <input type="submit" value="Registrarse" class="button" />
+                </form>
+            </section>
         </article>
+
+        <script
+            type="module"
+            src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+        <script
+            nomodule
+            src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     </body>
 </html>
