@@ -6,6 +6,7 @@ package com.alquiler.servlets;
 
 import com.alquiler.model.dto.ClienteDTO;
 import com.alquiler.model.repository.ClienteRepository;
+import com.alquiler.model.service.RegistrarUsuario;
 import com.alquiler.util.SignupValidator;
 import com.alquiler.util.ValidationResult;
 import java.io.IOException;
@@ -38,18 +39,21 @@ public class SignupServlet extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             ClienteDTO cliente = new ClienteDTO();
             ClienteRepository repositorio = (ClienteRepository) getServletContext().getAttribute("clienteRepository");
-
+            
             cliente.setNombreCompleto(request.getParameter("name"));
             cliente.setNombreUsuario(request.getParameter("username"));
             cliente.setCorreo(request.getParameter("email"));
             cliente.setTelefono(request.getParameter("phone"));
             cliente.setContrasenia(request.getParameter("password"));
-
+            
             ValidationResult resultado = SignupValidator.validar(cliente, repositorio);
-            if(!resultado.isValido()){
+            if (!resultado.isValido()) {
                 request.setAttribute("errorMessage", resultado.getMensaje());
                 request.getRequestDispatcher("index.jsp").forward(request, response);
             }
+            
+            RegistrarUsuario registro = new RegistrarUsuario(repositorio);
+            registro.ejecutar(cliente);
         }
     }
 
