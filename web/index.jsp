@@ -61,6 +61,14 @@
                         }
                         %>
                     </span>
+                    <span class="mensaje-exito">
+                        <%
+                        String successMessage = (String) request.getAttribute("successMessage");
+                        if (successMessage != null) {
+                            out.println(successMessage);
+                        }
+                        %>
+                    </span>
                     <div class="input-container">
                         <ion-icon name="person-outline"></ion-icon>
                         <input
