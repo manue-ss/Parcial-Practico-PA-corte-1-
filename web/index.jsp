@@ -18,12 +18,20 @@
                     aria-label="Inicio de sesión">
                     <h1>Inicio de sesión</h1>
                     <span>Use su correo electrónico o nombre de usuario</span
-                    ><br />
+                    >
+                    <span class="mensaje-error">
+                        <%
+                            String errorLoginMessage = (String) request.getAttribute("errorLoginMessage");
+                            if (errorLoginMessage != null) {
+                                out.println(errorLoginMessage);
+                            }
+                        %>
+                    </span>
                     <div class="input-container">
                         <ion-icon name="person-circle-outline"></ion-icon>
                         <input
                             type="text"
-                            id="username"
+                            id="username-login"
                             name="username"
                             placeholder="Usuario o Correo Electrónico"
                             required />
@@ -32,12 +40,12 @@
                         <ion-icon name="lock-closed-outline"></ion-icon>
                         <input
                             type="password"
-                            id="password"
+                            id="password-login"
                             name="password"
                             placeholder="Contraseña"
                             required />
                     </div>
-                    <a href="">¿Olvidaste tu contraseña?</a>
+                    <a href="development.html">¿Olvidaste tu contraseña?</a>
                     <input
                         type="submit"
                         value="Iniciar Sesión"
@@ -52,12 +60,12 @@
                     role="form"
                     aria-label="Registro de usuario">
                     <h1>Registro</h1>
-                    <span>Usa tus datos personales para registrarte</span><br />
+                    <span>Usa tus datos personales para registrarte</span>
                     <span class="mensaje-error">
                         <%
-                        String errorMessage = (String) request.getAttribute("errorMessage");
-                        if (errorMessage != null) {
-                            out.println(errorMessage);
+                        String errorSignupMessage = (String) request.getAttribute("errorSignupMessage");
+                        if (errorSignupMessage != null) {
+                            out.println(errorSignupMessage);
                         }
                         %>
                     </span>
