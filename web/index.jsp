@@ -1,3 +1,4 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!doctype html>
 <html lang="es">
     <head>
@@ -19,7 +20,7 @@
                     <span>Use su correo electrónico o nombre de usuario</span
                     ><br />
                     <div class="input-container">
-                        <ion-icon name="per21son-circle-outline"></ion-icon>
+                        <ion-icon name="person-circle-outline"></ion-icon>
                         <input
                             type="text"
                             id="username"
