@@ -35,25 +35,33 @@ public class SignupServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             ClienteDTO cliente = new ClienteDTO();
             ClienteRepository repositorio = (ClienteRepository) getServletContext().getAttribute("clienteRepository");
-            
+
             cliente.setNombreCompleto(request.getParameter("name"));
             cliente.setNombreUsuario(request.getParameter("username"));
             cliente.setCorreo(request.getParameter("email"));
             cliente.setTelefono(request.getParameter("phone"));
             cliente.setContrasenia(request.getParameter("password"));
-            
+
             ValidationResult resultado = SignupValidator.validar(cliente, repositorio);
             if (!resultado.isValido()) {
                 request.setAttribute("errorMessage", resultado.getMensaje());
                 request.getRequestDispatcher("index.jsp").forward(request, response);
+                return;
+            } else {
+                // Validación pasó, proceder con registro
+                RegistrarUsuario registrar = new RegistrarUsuario(repositorio);
+                registrar.ejecutar(cliente);
+                // Éxito: redirigir o mostrar mensaje
+                request.setAttribute("successMessage", "Usuario registrado exitosamente. Inicia sesión.");
+                request.getRequestDispatcher("index.jsp").forward(request, response);
             }
-            
-            RegistrarUsuario registro = new RegistrarUsuario(repositorio);
-            registro.ejecutar(cliente);
+            request.getRequestDispatcher("index.jsp").forward(request, response);
+
         }
     }
 
