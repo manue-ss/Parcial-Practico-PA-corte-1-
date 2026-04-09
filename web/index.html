@@ -15,11 +15,11 @@
                     method="post"
                     role="form"
                     aria-label="Inicio de sesión">
-                    <h1>Inicio de sesion</h1>
+                    <h1>Inicio de sesión</h1>
                     <span>Use su correo electrónico o nombre de usuario</span
                     ><br />
                     <div class="input-container">
-                        <ion-icon name="person-circle-outline"></ion-icon>
+                        <ion-icon name="per21son-circle-outline"></ion-icon>
                         <input
                             type="text"
                             id="username"
@@ -45,8 +45,8 @@
             </section>
             <section class="card-form">
                 <form
-                    class="form-singup"
-                    action="SingupServlet"
+                    class="form-signup"
+                    action="SignupServlet"
                     method="post"
                     role="form"
                     aria-label="Registro de usuario">
@@ -56,8 +56,8 @@
                         <ion-icon name="person-outline"></ion-icon>
                         <input
                             type="text"
-                            id="username"
-                            name="username"
+                            id="name"
+                            name="name"
                             placeholder="Nombre Completo"
                             required />
                     </div>
@@ -65,7 +65,7 @@
                         <ion-icon name="person-circle-outline"></ion-icon>
                         <input
                             type="text"
-                            id="username"
+                            id="username-signup"
                             name="username"
                             placeholder="Nombre de Usuario"
                             required />
@@ -85,7 +85,7 @@
                             type="tel"
                             id="phone"
                             name="phone"
-                            pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+                            pattern="[0-9+\-\s]{7,15}"
                             placeholder="Número de teléfono"
                             required />
                     </div>
@@ -94,7 +94,7 @@
                         <ion-icon name="lock-closed-outline"></ion-icon>
                         <input
                             type="password"
-                            id="password"
+                            id="password-signup"
                             name="password"
                             placeholder="Contraseña"
                             required />
@@ -105,13 +105,13 @@
             </section>
 
             <section class="card-welcome">
-                <div class="welcome-singup welcome">
+                <div class="welcome-signup welcome">
                     <h3>¡Hola Denuevo!</h3>
                     <p>
                         Si es tu primera vez, registrate con tus datos
                         personales
                     </p>
-                    <button class="button" id="btn-singup">Registrarse</button>
+                    <button class="button" id="btn-signup">Registrarse</button>
                 </div>
                 <div class="welcome-login welcome">
                     <h3>¡Bienvenido!</h3>
