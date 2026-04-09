@@ -49,7 +49,7 @@ public class SignupServlet extends HttpServlet {
 
             ValidationResult resultado = SignupValidator.validar(cliente, repositorio);
             if (!resultado.isValido()) {
-                request.setAttribute("errorMessage", resultado.getMensaje());
+                request.setAttribute("errorSignupMessage", resultado.getMensaje());
                 request.getRequestDispatcher("index.jsp").forward(request, response);
                 return;
             } else {
