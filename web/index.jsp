@@ -52,6 +52,14 @@
                     aria-label="Registro de usuario">
                     <h1>Registro</h1>
                     <span>Usa tus datos personales para registrarte</span><br />
+                    <span class="mensaje-error">
+                        <%
+                        String errorMessage = (String) request.getAttribute("errorMessage");
+                        if (errorMessage != null) {
+                            out.println(errorMessage);
+                        }
+                        %>
+                    </span>
                     <div class="input-container">
                         <ion-icon name="person-outline"></ion-icon>
                         <input
