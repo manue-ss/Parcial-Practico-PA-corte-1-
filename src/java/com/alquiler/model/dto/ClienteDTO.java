@@ -41,7 +41,7 @@ public class ClienteDTO {
         this.nombreCompleto = "";
         this.correo = "";
         this.telefono = "";
-        this.membresiaSeleccionada = "";
+        this.membresiaSeleccionada = "NORMAL";
         this.saldo = 0.0;
         this.fechaPagoMembresia = LocalDate.now();
     }
