@@ -93,7 +93,7 @@ public class SignupValidator {
         if (!telefono.matches("[0-9]+")) {
             return ValidationResult.error("telefono", "Solo se permiten números en el teléfono");
         }
-        if (telefono.matches("3[0-9]{9}")) {
+        if (!telefono.matches("3[0-9]{9}")) {
             return ValidationResult.error("telefono", "Debe ingresar número de telefono valido");
         }
 
