@@ -1,12 +1,22 @@
 const buttonLogin = document.querySelector("#btn-login");
-const buttonSingup = document.querySelector("#btn-singup");
-const contenerdor = document.querySelector(".card");
+const buttonSignup = document.querySelector("#btn-signup");
+const contenedor = document.querySelector(".card");
 
-buttonLogin.addEventListener("click", () => {
-    contenerdor.classList.remove("toggle");
-});
+if (buttonLogin) {
+    buttonLogin.addEventListener("click", () => {
+        console.log("click-login");
+        contenedor.classList.remove("toggle");
+    });
+} else {
+    console.error("Elemento #btn-login no encontrado");
+}
 
-buttonSingup.addEventListener("click", () => {
-    contenerdor.classList.add("toggle");
-});
+if (buttonSignup) {
+    buttonSignup.addEventListener("click", () => {
+        console.log("click-signup");
+        contenedor.classList.add("toggle");
+    });
+} else {
+    console.error("Elemento #btn-signup no encontrado");
+}
 
