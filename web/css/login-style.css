@@ -89,6 +89,11 @@ body {
     font-size: 14px;
     margin-bottom: 20px;
 }
+.card-form .mensaje-exito {
+    color: green;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
 
 .button {
     width: 170px;
