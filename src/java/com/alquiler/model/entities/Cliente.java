@@ -18,6 +18,19 @@ public class Cliente extends Cuenta {
     private TipoMembresia membresia;
 
     /**
+     * Constructor por defecto. Inicializa los atributos de cadena con valores
+     * vacíos, el saldo en cero y la fecha de membresía con la fecha actual del
+     * sistema para evitar referencias nulas durante la carga inicial de
+     * formularios o perfiles.
+     */
+    public Cliente() {
+        super();
+        this.membresia = TipoMembresia.valueOf("NORMAL");
+        this.saldo = 0.0;
+        this.fechaPagoMembresia = LocalDate.now();
+    }
+
+    /**
      * Constructor completo para crear un nuevo Cliente.
      *
      * @param saldo Monto de dinero disponible en la cuenta para realizar

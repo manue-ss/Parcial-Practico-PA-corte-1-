@@ -16,6 +16,15 @@ public abstract class Cuenta {
     private String nombreCompleto;
     private String correo;
     private String telefono;
+    
+    public Cuenta() {
+        this.id = "";
+        this.nombreUsuario = "";
+        this.contrasenia = "";
+        this.nombreCompleto = "";
+        this.correo = "";
+        this.telefono = "";
+    }
 
     /**
      * Constructor para la clase Cuenta.
