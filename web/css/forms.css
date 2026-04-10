@@ -1,0 +1,182 @@
+/* Forms and Input specific components (Refactored for ISP) */
+
+/* General utility margin/padding classes */
+.bottom-margin-md {
+    margin-bottom: 2rem;
+}
+
+.top-margin-md {
+    margin-top: 2rem;
+}
+
+/* Base input and readonly states */
+.readonly-input {
+    background-color: #f5f5f5 !important;
+    opacity: 0.8;
+}
+
+/* Page content specific flex layouts */
+.profile-page-content {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Panel subdivisions */
+.panel-side {
+    flex: 1;
+    min-width: 300px;
+    margin: 0;
+}
+
+.panel-main {
+    flex: 2;
+    min-width: 400px;
+    margin: 0;
+}
+
+/* Inline form structures */
+.inline-input-btn {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.inline-input-btn input {
+    flex: 1;
+}
+
+.inline-input-btn button {
+    margin: 0;
+    width: auto;
+}
+
+/* Identity card badge for employee */
+.identity-badge {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    background-color: var(--color-bg);
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+
+.identity-badge-icon {
+    font-size: 2.5rem;
+    color: var(--color-text-secondary);
+}
+
+.identity-badge-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.identity-badge-primary {
+    font-weight: 700;
+    color: var(--color-text-primary);
+}
+
+.identity-badge-secondary {
+    font-size: 0.85rem;
+    color: var(--color-accent);
+    font-weight: 600;
+}
+
+/* Form row splits (two columns inside a form) */
+.form-row {
+    display: flex;
+    gap: 1rem;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+/* Admin specific overrides */
+.admin-panel-title {
+    color: var(--color-accent);
+    font-weight: 700;
+}
+
+.admin-action-title {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+}
+
+.admin-action-subtitle {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 2rem;
+}
+
+.admin-btn {
+    background-color: var(--color-accent) !important;
+}
+
+.admin-btn:hover {
+    opacity: 0.8;
+}
+
+
+/* Grid para clientes */
+.clients-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+/* Modificadores extra para badges en tabla o grid */
+.badge.premium {
+    background-color: #9b59b6;
+    color: white;
+}
+
+
+
+/* Contenedores para informacion estática */
+.static-info-container {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background-color: var(--color-bg);
+    border-radius: 0.5rem;
+}
+
+.static-info-title {
+    margin-bottom: 0.5rem;
+    color: var(--color-header);
+}
+
+.total-estimate-container {
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+.total-estimate-price {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.total-estimate-price span {
+    color: var(--color-header);
+}
+
+.total-estimate-note {
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+    margin-top: 0.3rem;
+}
+
+/* Row elements de bonotes */
+.btn-row {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.btn-row button {
+    margin-top: 0;
+}
+

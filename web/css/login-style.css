@@ -106,9 +106,21 @@ body {
     color: white;
 }
 
+.employee-portal-btn {
+    text-decoration: none;
+    color: #3ab397;
+    margin-top: 15px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.employee-portal-btn:hover {
+    text-decoration: underline;
+}
+
 /*Animacion form*/
 
-.form-singup {
+.form-signup {
     transform: translateX(-100%);
 }
 
@@ -116,7 +128,7 @@ body {
     transform: translateX(100%);
 }
 
-.card.toggle .form-singup {
+.card.toggle .form-signup {
     transform: translateX(0%);
 }
 

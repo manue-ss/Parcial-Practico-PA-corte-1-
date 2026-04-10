@@ -19,4 +19,3 @@ if (buttonSignup) {
 } else {
     console.error("Elemento #btn-signup no encontrado");
 }
-

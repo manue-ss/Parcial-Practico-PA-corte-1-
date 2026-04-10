@@ -50,6 +50,8 @@
                         type="submit"
                         value="Iniciar Sesión"
                         class="button" />
+                    
+                    <a href="employeeLogin.jsp" class="employee-portal-btn">Acceso a Empleados</a>
                 </form>
             </section>
             <section class="card-form">
@@ -131,7 +133,7 @@
 
             <section class="card-welcome">
                 <div class="welcome-signup welcome">
-                    <h3>¡Hola Denuevo!</h3>
+                    <h3>¡Hola de Nuevo!</h3>
                     <p>
                         Si es tu primera vez, registrate con tus datos
                         personales

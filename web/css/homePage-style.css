@@ -1,0 +1,250 @@
+/* Page Content Specific Logic */
+
+.page-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 1.4rem;
+}
+
+.product-board {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    height: 100%;
+}
+
+.product-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border-bottom: 2px solid var(--color-border);
+}
+
+.product-section-header {
+    display: flex;
+    flex-direction: column;
+    padding: 0rem;
+    margin-bottom: 0.5rem;
+}
+
+.product-section-title {
+    display: flex;
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+    color: var(--color-text-primary);
+}
+
+.product-section-subtitle {
+    font-size: 0.9rem;
+    width: 100%;
+    color: var(--color-text-secondary);
+}
+
+.product-list {
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+    padding: 0.5rem;
+    flex: 1;
+}
+
+.product-card {
+    border-radius: 1rem;
+    box-shadow: 0 0 5px var(--shadow-border);
+    background-color: var(--color-surface);
+    width: 12rem;
+    height: 14rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.product-card div {
+    padding: 1rem 0.6rem;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    gap: 0.5rem;
+}
+
+.product-card-presentation {
+    border-bottom: 1px solid var(--color-bg);
+}
+
+.product-card-presentation span {
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.05rem;
+}
+
+.product-card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+}
+
+.product-card-details span {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+}
+
+.product-card-details span:last-child {
+    font-weight: 600;
+    color: var(--color-header);
+}
+
+.product-card:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transform: translateY(-5px);
+}
+
+/* Boton Carrito de Compras (Hover effect) */
+.product-card-btn {
+    position: absolute;
+    bottom: -3rem; 
+    left: 0;
+    width: 100%;
+    height: 3rem;
+    background-color: var(--color-header);
+    color: white;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    transition: bottom 0.3s ease;
+}
+
+.product-card-btn:hover {
+    background-color: #2e967d;
+}
+
+.product-card:hover .product-card-btn {
+    bottom: 0;
+}
+
+.form-contents {
+    display: contents;
+}
+
+.page-footer {
+    width: 100%;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    border-top: 1px solid var(--color-border);
+    margin-top: 1rem;
+}
+
+/* Nuevas clases para perfiles, formularios y tablas */
+.action-box {
+    background-color: var(--color-surface);
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 0 5px var(--shadow-border);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.action-box-title {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--color-text-primary);
+    border-bottom: 2px solid var(--color-border);
+    padding-bottom: 0.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.2rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+}
+
+.form-group input, .form-group select {
+    padding: 0.8rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    outline: none;
+    font-family: inherit;
+    background-color: var(--color-bg);
+}
+
+.balance-card {
+    background: linear-gradient(135deg, #3ab397, #218c74);
+    color: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.balance-card h3 {
+    font-size: 1rem;
+    font-weight: 400;
+    margin-bottom: 0.5rem;
+}
+
+.balance-card .amount {
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+.btn-primary {
+    background-color: var(--color-header);
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: opacity 0.3s ease;
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.btn-danger {
+    background-color: #ff4757;
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: opacity 0.3s ease;
+    width: 100%;
+}
+
+.btn-primary:hover, .btn-danger:hover {
+    opacity: 0.8;
+}
+
+.product-card-btn.danger {
+    background-color: #ff4757;
+}
+
+.product-card-btn.danger:hover {
+    background-color: #ff6b81;
+}
