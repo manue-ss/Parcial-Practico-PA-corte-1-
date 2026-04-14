@@ -91,9 +91,12 @@ public class ClienteRepository implements IRepository<Cliente, String> {
      */
     @Override
     public Cliente obtenerPorId(String id) {
-        // En este diseño, la llave del Map era el username, así que buscamos sobre
-        // username
-        return clientesMap.get(id);
+        for (Cliente cliente : clientesMap.values()) {
+            if (cliente.getId().equals(id)) {
+                return cliente;
+            }
+        }
+        return null;
     }
 
     /**

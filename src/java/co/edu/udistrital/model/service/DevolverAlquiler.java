@@ -37,27 +37,31 @@ public class DevolverAlquiler {
     /**
      * Termina el ciclo de vida del alquiler marcado como devuelto el día de hoy
      * y retornando la unidad del catálogo al stock general.
-     * 
+     *
      * @param idAlquiler Identificador principal de la transacción (AlqXXXX)
      * @return boolean true si fue exitoso, false si fue irreconocible o falló.
      */
     public boolean regresarProducto(String idAlquiler) {
         Alquiler alq = alquilerRepo.obtenerPorId(idAlquiler);
-        
+
         if (alq != null && alq.isVigente()) {
-            
+
             // Lógica de multa si la devolución es tardía
             long diasRetraso = ChronoUnit.DAYS.between(alq.getFechaEntregaPactada(), LocalDate.now());
             if (diasRetraso > 0) {
                 double costoBasePro = 0.0;
                 if (alq.getIdProducto().startsWith("Jg")) {
                     Juego j = juegoRepo.obtenerPorId(alq.getIdProducto());
-                    if (j != null) costoBasePro = j.getCostoBase();
+                    if (j != null) {
+                        costoBasePro = j.getCostoBase();
+                    }
                 } else {
                     Pelicula p = peliRepo.obtenerPorId(alq.getIdProducto());
-                    if (p != null) costoBasePro = p.getCostoBase();
+                    if (p != null) {
+                        costoBasePro = p.getCostoBase();
+                    }
                 }
-                
+
                 double multa = diasRetraso * (costoBasePro * 1.5);
                 Cliente c = clienteRepo.obtenerPorId(alq.getIdUsuario());
                 if (c != null) {
@@ -65,7 +69,7 @@ public class DevolverAlquiler {
                     clienteRepo.guardar(c);
                 }
             }
-            
+
             // Reponer stock
             boolean recuperado = updateStock.modificarUnidad(alq.getIdProducto(), true);
             if (recuperado) {

@@ -19,8 +19,9 @@ import java.util.Map;
 /**
  * Repositorio encargado de gestionar la persistencia de Empleados y
  * Administradores usando un archivo JSON dedicado.
- * 
- * Implementa IRepository para cumplir con el Principio de Segregación de Interfaces (ISP).
+ *
+ * Implementa IRepository para cumplir con el Principio de Segregación de
+ * Interfaces (ISP).
  *
  * @author Manuel Salazar
  * @since 0.1
@@ -76,11 +77,17 @@ public class EmpleadoRepository implements IRepository<Empleado, String> {
 
     @Override
     public Empleado obtenerPorId(String id) {
-        return empleadosMap.get(id); // La llave aca será el username por consistencia
+        for (Empleado empleados : empleadosMap.values()) {
+            if (empleados.getId().equals(id)) {
+                return empleados;
+            }
+        }
+        return null;
     }
-    
+
     /**
      * Retorna el empleado si sus credenciales son válidas.
+     *
      * @param username string de identificación
      * @return instanciación del objeto, null si no hay.
      */
@@ -88,6 +95,14 @@ public class EmpleadoRepository implements IRepository<Empleado, String> {
         return empleadosMap.get(username);
     }
 
+    public Empleado obtenerPorCorreo(String correo) {
+        for (Empleado empleado : empleadosMap.values()) {
+            if (empleado.getCorreo().equals(correo)) {
+                return empleado;
+            }
+        }
+        return null;
+    }
     @Override
     public List<Empleado> obtenerTodos() {
         return new ArrayList<>(empleadosMap.values());
@@ -107,35 +122,5 @@ public class EmpleadoRepository implements IRepository<Empleado, String> {
     public int cantidad() {
         return empleadosMap.size();
     }
-    
-    /**
-     * Cuenta específicamente cuántos usuarios de tipo admin hay
-     * revisando el identificador `Ad`. 
-     * 
-     * @return número de gerentes/administradores registrados.
-     */
-    public int cantidadAdmins() {
-        int count = 0;
-        for (Empleado e : empleadosMap.values()) {
-            if (e.getId() != null && e.getId().startsWith("Ad")) {
-                count++;
-            }
-        }
-        return count;
-    }
-    
-    /**
-     * Cuenta específicamente cuántos usuarios de tipo empleado regular (EM) hay.
-     * 
-     * @return número de empleados regulares.
-     */
-    public int cantidadRegulares() {
-        int count = 0;
-        for (Empleado e : empleadosMap.values()) {
-            if (e.getId() != null && e.getId().startsWith("EM")) {
-                count++;
-            }
-        }
-        return count;
-    }
+
 }
