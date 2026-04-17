@@ -14,7 +14,7 @@ import java.sql.Date;
  *
  * @author Acer-Pc
  */
-public class Migrator {
+public class Migrator_unused {
 
     private ClienteRepository clienteRepo = new ClienteRepository();
     private JuegoRepository juegoRepo = new JuegoRepository();
