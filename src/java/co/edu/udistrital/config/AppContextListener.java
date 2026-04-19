@@ -41,6 +41,6 @@ public class AppContextListener implements ServletContextListener {
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
-        System.out.println("✓ Aplicación cerrada. Estado persistido en archivos JSON.");
+        System.out.println("✓ Aplicación cerrada. Estado persistido en bases de Datos.");
     }
 }
