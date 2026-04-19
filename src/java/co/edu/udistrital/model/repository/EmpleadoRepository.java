@@ -24,11 +24,11 @@ public class EmpleadoRepository {
 
     /*------------------->>C-Create<<-------------------*/
     /**
-     * Guarda un nuevo empleado. Si ya existe, devuelve error de consola.
+     * Registra un nuevo empleado en el sistema. Realiza una inserción doble
+     * protegida por la lógica de negocio para asegurar la creación del perfil.
      *
-     * @param empleado El cliente a guardar.
-     * @return verdadero si se añadió satisfactoriamente, falso en caso
-     * contrario.
+     * @param empleado Instancia con los datos de cargo y contacto.
+     * @return {@code true} si la operación fue exitosa.
      */
     public boolean addEmpleado(Empleado empleado) {
         String sqlCuenta = "INSERT INTO cuentas (username, nombre, contrasenia, correo, telefono) VALUES (?, ?, ?, ?, ?)";
@@ -73,7 +73,31 @@ public class EmpleadoRepository {
     }
 
     /*------------------->>R-Read<<-------------------*/
-    
+    private Empleado mapEmpleado(ResultSet rs) throws SQLException {
+        // Datos de la cuenta (Padre)
+        String username = rs.getString("username");
+        String nombre = rs.getString("nombre");
+        String contrasenia = rs.getString("contrasenia");
+        String correo = rs.getString("correo");
+        String telefono = rs.getString("telefono");
+
+        // Datos del empleado (Hijo)
+        int idInt = rs.getInt("id_cuenta");
+        String dni = rs.getString("dni");
+        String direccion = rs.getString("direccion");
+        String cargo = rs.getString("cargo");
+
+        String rol = rs.getString("rol");
+        String prefijo = rol.equalsIgnoreCase("EMPLEADO") ? "Em" : "Ad";
+        String idStr = prefijo + String.format("%05d", idInt);
+
+        System.out.println("Empleado encontrado: " + nombre);
+
+        return new Empleado(dni, direccion,
+                cargo, idStr, username,
+                contrasenia, nombre, correo, telefono);
+    }
+
     /**
      * Generaliza el proceso de llamado de un empleado segun diferentes
      * parametros.
@@ -89,29 +113,8 @@ public class EmpleadoRepository {
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-
-                    // Datos de la cuenta (Padre)
-                    String username = rs.getString("username");
-                    String nombre = rs.getString("nombre");
-                    String contrasenia = rs.getString("contrasenia");
-                    String correo = rs.getString("correo");
-                    String telefono = rs.getString("telefono");
-
-                    // Datos del empleado (Hijo)
-                    int idInt = rs.getInt("id_cuenta");
-                    String dni = rs.getString("dni");
-                    String direccion = rs.getString("direccion");
-                    String cargo = rs.getString("cargo");
-
-                    String rol = rs.getString("rol");
-                    String idStr = rol.equals("EMPLEADO") ? "Em" : "Ad"
-                            + String.format("%05d", idInt);
-
-                    System.out.println("Empleado encontrado: " + nombre);
-
-                    return new Empleado(dni, direccion,
-                            cargo, idStr, username,
-                            contrasenia, nombre, correo, telefono);
+                    Empleado emp = mapEmpleado(rs);
+                    return emp;
                 }
             }
         } catch (SQLException e) {
@@ -123,10 +126,10 @@ public class EmpleadoRepository {
     }
 
     /**
-     * Obtiene un empleado por id de usuario.
+     * Recupera un empleado utilizando su identificador único del sistema.
      *
-     * @param idBuscado
-     * @return El emplado o null si no existe.
+     * @param idBuscado ID con prefijo 'Em' o 'Ad'.
+     * @return Objeto {@link Empleado} o {@code null} si no se encuentra.
      */
     public Empleado getById(String idBuscado) {
         int idNumerico = Integer.parseInt(idBuscado.replaceAll("[^0-9]", ""));
@@ -174,7 +177,7 @@ public class EmpleadoRepository {
      *
      * @return Lista de todos los empelados.
      */
-    public List<Empleado> obtenerTodos() {
+    public List<Empleado> getAll() {
         List<Empleado> empleados = new ArrayList<>();
         // 1. SQL sin el WHERE para traer toda la tabla
         String sql = "SELECT em.*, cu.username, cu.nombre, cu.contrasenia, cu.correo, cu.telefono "
@@ -185,49 +188,27 @@ public class EmpleadoRepository {
                 Config.USER, Config.PASS); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                // Datos de la cuenta (Padre)
-                String username = rs.getString("username");
-                String nombre = rs.getString("nombre");
-                String contrasenia = rs.getString("contrasenia");
-                String correo = rs.getString("correo");
-                String telefono = rs.getString("telefono");
 
-                // Datos del empleado (Hijo)
-                int idInt = rs.getInt("id_cuenta");
-                String dni = rs.getString("dni");
-                String direccion = rs.getString("direccion");
-                String cargo = rs.getString("cargo");
-
-                String rol = rs.getString("rol");
-                String idStr = rol.equals("EMPLEADO") ? "Em" : "Ad"
-                        + String.format("%05d", idInt);
-
-                System.out.println("Empleado encontrado: " + nombre);
-                
-                Empleado emp = new Empleado(dni, direccion,
-                            cargo, idStr, username,
-                            contrasenia, nombre, correo, telefono);
+                Empleado emp = mapEmpleado(rs);
                 empleados.add(emp);
             }
 
         } catch (SQLException e) {
             System.err.println("Error al obtener todos los clientes: " + e.getMessage());
-            empleados = null;
         }
         return empleados;
     }
 
     /*------------------->>U-Update<<-------------------*/
-    
     /**
-     * Actualiza los datos de un empleado en la base de datos en base al id.
+     * Actualiza la información profesional y de contacto de un empleado.
      *
-     * @param empleado el objeto empleado con los datos actualizados.
-     * @return verdadero si se lograron a ctualizar los datos.
+     * @param empleado Objeto con los datos actualizados.
+     * @return {@code true} si se confirmó la transacción.
      */
     public boolean update(Empleado empleado) {
         String sqlCuenta = "UPDATE cuentas SET nombre = ?, contrasenia = ?, correo = ?, telefono = ? WHERE username = ?";
-        String sqlCliente = "UPDATE empleados SET dni = ?, direccion = ?, rol = ? WHERE id_cuenta = (SELECT id FROM cuentas WHERE username = ?)";
+        String sqlCliente = "UPDATE empleados SET dni = ?, direccion = ?, cargo = ? WHERE id_cuenta = ?";
 
         try (Connection con = DriverManager.getConnection(Config.URL, Config.USER, Config.PASS)) {
             con.setAutoCommit(false); // Transacción para que se actualicen ambas o ninguna
@@ -245,7 +226,9 @@ public class EmpleadoRepository {
                 psCli.setString(1, empleado.getDni());
                 psCli.setString(2, empleado.getDireccion());
                 psCli.setString(3, empleado.getCargo());
-                psCli.setString(4, empleado.getNombreUsuario());
+                String idStr = empleado.getId();
+                int idNumerico = Integer.parseInt(idStr.replaceAll("[^0-9]", ""));
+                psCli.setInt(4, idNumerico);
                 psCli.executeUpdate();
             }
 

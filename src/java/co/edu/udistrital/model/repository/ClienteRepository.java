@@ -25,11 +25,11 @@ public class ClienteRepository {
 
     /*------------------->>C-Create<<-------------------*/
     /**
-     * Guarda un nuevo cliente. Si ya existe, devuelve error de consola.
+     * Registra un nuevo cliente realizando una inserción atómica en las tablas
+     * 'cuentas' y 'clientes'.
      *
-     * @param cliente El cliente a guardar.
-     * @return verdadero si se añadió satisfactoriamente, falso en caso
-     * contrario.
+     * @param cliente Objeto con los datos de identidad y financieros.
+     * @return {@code true} si se crearon ambos registros exitosamente.
      */
     public boolean addCliente(Cliente cliente) {
         String sqlCuenta = "INSERT INTO cuentas (username, nombre, contrasenia, correo, telefono) VALUES (?, ?, ?, ?, ?)";
@@ -76,6 +76,41 @@ public class ClienteRepository {
 
     /*------------------->>R-Read<<-------------------*/
     /**
+     * Transforma una fila de la base de datos en una instancia de Cliente.
+     * Realiza la conversión de tipos SQL (Date) a tipos Java modernos
+     * (LocalDate).
+     *
+     * @param rs ResultSet con la información de la unión de cuentas y clientes.
+     * @return Instancia de {@link Cliente}.
+     * @throws SQLException Si hay errores en la lectura de columnas.
+     */
+    private Cliente mapCliente(ResultSet rs) throws SQLException {
+        // Datos de la cuenta (Padre)
+        String username = rs.getString("username");
+        String nombre = rs.getString("nombre");
+        String contrasenia = rs.getString("contrasenia");
+        String correo = rs.getString("correo");
+        String telefono = rs.getString("telefono");
+
+        // Datos del cliente (Hijo)
+        int idInt = rs.getInt("id_cuenta");
+        String idStr = "Cl" + String.format("%05d", idInt);
+        double saldo = rs.getDouble("saldo");
+        String membresiaStr = rs.getString("membresia");
+        Date fechaSql = rs.getDate("fecha_membresia");
+
+        System.out.println("Cliente encontrado: " + nombre);
+
+        TipoMembresia membresia = TipoMembresia.valueOf(membresiaStr);
+        LocalDate fechaMembresia = fechaSql.toLocalDate();
+        Cliente cli = new Cliente(saldo, fechaMembresia,
+                membresia, idStr, username,
+                contrasenia, nombre, correo, telefono);
+
+        return cli;
+    }
+
+    /**
      * Generaliza el proceso de llamado de un cliente segun diferentes
      * parametros.
      *
@@ -91,27 +126,8 @@ public class ClienteRepository {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
 
-                    // Datos de la cuenta (Padre)
-                    String username = rs.getString("username");
-                    String nombre = rs.getString("nombre");
-                    String contrasenia = rs.getString("contrasenia");
-                    String correo = rs.getString("correo");
-                    String telefono = rs.getString("telefono");
-
-                    // Datos del cliente (Hijo)
-                    int idInt = rs.getInt("id_cuenta");
-                    String idStr = "Cl" + String.format("%05d", idInt);
-                    double saldo = rs.getDouble("saldo");
-                    String membresiaStr = rs.getString("membresia");
-                    Date fechaSql = rs.getDate("fecha_membresia");
-
-                    System.out.println("Cliente encontrado: " + nombre);
-
-                    TipoMembresia membresia = TipoMembresia.valueOf(membresiaStr);
-                    LocalDate fechaMembresia = fechaSql.toLocalDate();
-                    return new Cliente(saldo, fechaMembresia,
-                            membresia, idStr, username,
-                            contrasenia, nombre, correo, telefono);
+                    Cliente cliente = mapCliente(rs);
+                    return cliente;
                 }
             }
         } catch (SQLException e) {
@@ -123,10 +139,10 @@ public class ClienteRepository {
     }
 
     /**
-     * Obtiene un cliente por id de usuario.
+     * Busca un cliente utilizando su ID único formateado (ej: Cl00001).
      *
-     * @param idBuscado id del cliente
-     * @return El cliente o null si no existe.
+     * @param idBuscado Cadena alfanumérica del identificador.
+     * @return El {@link Cliente} encontrado o {@code null}.
      */
     public Cliente getById(String idBuscado) {
         int idNumerico = Integer.parseInt(idBuscado.replaceAll("[^0-9]", ""));
@@ -140,10 +156,11 @@ public class ClienteRepository {
     }
 
     /**
-     * Obtiene un cliente por nombre de usuario.
+     * Recupera un cliente basado en su nombre de usuario (único en la tabla
+     * cuentas).
      *
-     * @param username El nombre de usuario.
-     * @return El cliente o null si no existe.
+     * @param username El identificador de inicio de sesión.
+     * @return El {@link Cliente} correspondiente.
      */
     public Cliente getByUsername(String username) {
         String sql = "SELECT cl.*, cu.username, cu.nombre, cu.contrasenia, cu.correo, cu.telefono "
@@ -174,7 +191,7 @@ public class ClienteRepository {
      *
      * @return Lista de todos los clientes.
      */
-    public List<Cliente> obtenerTodos() {
+    public List<Cliente> getAll() {
         List<Cliente> clientes = new ArrayList<>();
         // 1. SQL sin el WHERE para traer toda la tabla
         String sql = "SELECT cl.*, cu.username, cu.nombre, cu.contrasenia, cu.correo, cu.telefono "
@@ -185,27 +202,7 @@ public class ClienteRepository {
                 Config.USER, Config.PASS); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                // Datos de la cuenta (Padre)
-                String username = rs.getString("username");
-                String nombre = rs.getString("nombre");
-                String contrasenia = rs.getString("contrasenia");
-                String correo = rs.getString("correo");
-                String telefono = rs.getString("telefono");
-
-                // Datos del cliente (Hijo)
-                int idInt = rs.getInt("id_cuenta");
-                String idStr = "Cl" + String.format("%05d", idInt);
-                double saldo = rs.getDouble("saldo");
-                String membresiaStr = rs.getString("membresia");
-                Date fechaSql = rs.getDate("fecha_membresia");
-
-                System.out.println("Cliente encontrado: " + nombre);
-
-                TipoMembresia membresia = TipoMembresia.valueOf(membresiaStr);
-                LocalDate fechaMembresia = fechaSql.toLocalDate();
-                Cliente cli = new Cliente(saldo, fechaMembresia,
-                        membresia, idStr, username,
-                        contrasenia, nombre, correo, telefono);
+                Cliente cli = mapCliente(rs);
                 clientes.add(cli);
             }
 
@@ -217,14 +214,16 @@ public class ClienteRepository {
 
     /*------------------->>U-Update<<-------------------*/
     /**
-     * Actualiza los datos de un cliente en la base de datos en base al id.
+     * Actualiza la información de perfil y suscripción del cliente. Utiliza una
+     * transacción para asegurar la consistencia entre la cuenta y el perfil del
+     * cliente.
      *
-     * @param cliente el objeto cliente con los datos actualizados.
-     * @return verdadero si se lograron a ctualizar los datos.
+     * @param cliente Objeto con los datos modificados.
+     * @return {@code true} si la actualización fue completa.
      */
     public boolean update(Cliente cliente) {
         String sqlCuenta = "UPDATE cuentas SET nombre = ?, contrasenia = ?, correo = ?, telefono = ? WHERE username = ?";
-        String sqlCliente = "UPDATE clientes SET saldo = ?, membresia = ?, fecha_membresia = ? WHERE id_cuenta = (SELECT id FROM cuentas WHERE username = ?)";
+        String sqlCliente = "UPDATE clientes SET saldo = ?, membresia = ?, fecha_membresia = ? WHERE id_cuenta = ?";
 
         try (Connection con = DriverManager.getConnection(Config.URL, Config.USER, Config.PASS)) {
             con.setAutoCommit(false); // Transacción para que se actualicen ambas o ninguna
@@ -242,7 +241,9 @@ public class ClienteRepository {
                 psCli.setDouble(1, cliente.getSaldo());
                 psCli.setString(2, cliente.getMembresia().toString());
                 psCli.setDate(3, Date.valueOf(cliente.getFechaPagoMembresia()));
-                psCli.setString(4, cliente.getNombreUsuario());
+                String idStr = cliente.getId();
+                int idNumerico = Integer.parseInt(idStr.replaceAll("[^0-9]", ""));
+                psCli.setInt(4, idNumerico);
                 psCli.executeUpdate();
             }
 
@@ -256,10 +257,11 @@ public class ClienteRepository {
 
     /*------------------->>D-Delete<<-------------------*/
     /**
-     * Elimina un cliente por nombre de usuario.
+     * Elimina una cuenta de usuario. La integridad referencial (CASCADE) debe
+     * encargarse de eliminar el registro asociado en la tabla clientes.
      *
-     * @param nombreUsuario El nombre de usuario.
-     * @return true si se eliminó, false si no existía.
+     * @param nombreUsuario Username del cliente a dar de baja.
+     * @return {@code true} si el usuario fue eliminado.
      */
     public boolean remove(String nombreUsuario) {
         String sql = "DELETE FROM cuentas WHERE username = ?";
@@ -280,12 +282,12 @@ public class ClienteRepository {
 
     /*------------------->>Otros<<-------------------*/
     /**
-     * Verifica si existe un cliente con el nombre de usuario dado.
+     * Verifica la disponibilidad de un nombre de usuario antes de un registro.
      *
-     * @param username El nombre de usuario.
-     * @return true si existe, false en caso contrario.
+     * @param username El nombre a comprobar.
+     * @return {@code true} si ya está ocupado.
      */
-    public boolean existeUsername(String username) {
+    public boolean existUsername(String username) {
         String sql = "SELECT COUNT(*) FROM cuentas WHERE username = ?";
 
         try (Connection con = DriverManager.getConnection(Config.URL, Config.USER, Config.PASS); PreparedStatement ps = con.prepareStatement(sql)) {
@@ -305,12 +307,13 @@ public class ClienteRepository {
     }
 
     /**
-     * Verifica si existe un cliente con el correo dado.
+     * Verifica la disponibilidad de un correo electrónico en el sistema. Útil
+     * para evitar que múltiples cuentas compartan el mismo email.
      *
-     * @param mail El correo.
-     * @return true si existe, false en caso contrario.
+     * @param mail El correo a consultar.
+     * @return {@code true} si el correo ya está en uso.
      */
-    public boolean existeCorreo(String mail) {
+    public boolean existMail(String mail) {
         String sql = "SELECT COUNT(*) FROM cuentas WHERE correo = ?";
 
         try (Connection con = DriverManager.getConnection(Config.URL, Config.USER, Config.PASS); PreparedStatement ps = con.prepareStatement(sql)) {
@@ -330,9 +333,9 @@ public class ClienteRepository {
     }
 
     /**
-     * Calcula la cantidad de cuentas de clientes.
+     * Obtiene el conteo total de registros en la tabla clientes.
      *
-     * @return clatidad de cuentas de clientes.
+     * @return El número total de clientes registrados.
      */
     public int cantidad() {
         String sql = "SELECT COUNT(*) FROM clientes";
@@ -344,7 +347,7 @@ public class ClienteRepository {
             }
 
         } catch (SQLException e) {
-            System.err.println("Error al verificar correo: " + e.getMessage());
+            System.err.println("Error al verificar cantidad: " + e.getMessage());
         }
         return 0;
     }
