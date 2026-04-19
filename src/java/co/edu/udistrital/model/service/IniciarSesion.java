@@ -11,7 +11,7 @@ import co.edu.udistrital.util.SecurityUtil;
  */
 public class IniciarSesion {
 
-    private ClienteRepository repositorio;
+    private final ClienteRepository repositorio;
 
     /**
      * Constructor que recibe el repositorio inyectado.
@@ -27,9 +27,9 @@ public class IniciarSesion {
         String identificador = dto.getNombreUsuario();
 
         if (identificador.contains("@")) {
-            cliente = repositorio.obtenerPorCorreo(identificador);
+            cliente = repositorio.getByMail(identificador);
         } else {
-            cliente = repositorio.obtenerPorUsername(identificador);
+            cliente = repositorio.getByUsername(identificador);
         }
 
         if (cliente == null) {
