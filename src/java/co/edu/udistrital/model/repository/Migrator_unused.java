@@ -40,7 +40,7 @@ public class Migrator_unused {
 
     private boolean migrarJuegos() {
         // 1. Obtenemos los datos que ya tienes en memoria/JSON
-        List<Juego> listaActual = juegoRepo.obtenerTodos();
+        List<Juego> listaActual = juegoRepo.getAll();
 
         String sqlProducto = "INSERT INTO productos (nombre, costo, stock, alquilados, tipo_producto) VALUES (?, ?, ?, ?, 'JUEGO')";
         String sqlJuego = "INSERT INTO juegos (id_producto, plataforma, genero) VALUES (?, ?, ?)";
@@ -85,7 +85,7 @@ public class Migrator_unused {
 
     private boolean migrarPeliculas() {
         // 1. Obtenemos los datos que ya tienes en memoria/JSON
-        List<Pelicula> listaActual = peliculaRepo.obtenerTodos();
+        List<Pelicula> listaActual = peliculaRepo.getAll();
 
         String sqlProducto = "INSERT INTO productos (nombre, costo, stock, alquilados, tipo_producto) VALUES (?, ?, ?, ?, 'JUEGO')";
         String sqlPelicula = "INSERT INTO peliculas (id_producto, formato, duracion) VALUES (?, ?, ?)";
@@ -130,7 +130,7 @@ public class Migrator_unused {
 
     private boolean migrarClientes() {
         // 1. Obtenemos los datos que ya tienes en memoria/JSON
-        List<Cliente> listaActual = clienteRepo.obtenerTodos();
+        List<Cliente> listaActual = clienteRepo.getAll();
 
         String sqlCuenta = "INSERT INTO cuentas (username, nombre, contrasenia, correo, telefono) VALUES (?, ?, ?, ?, ?)";
         String sqlCliente = "INSERT INTO clientes (id_cuenta, saldo, membresia, fecha_membresia) VALUES (?, ?, ?, ?)";
@@ -177,7 +177,7 @@ public class Migrator_unused {
 
     private boolean migrarEmpleados() {
         // 1. Obtenemos los datos que ya tienes en memoria/JSON
-        List<Empleado> listaActual = empleadoRepo.obtenerTodos();
+        List<Empleado> listaActual = empleadoRepo.getAll();
 
         String sqlCuenta = "INSERT INTO cuentas (username, nombre, contrasenia, correo, telefono) VALUES (?, ?, ?, ?, ?)";
         String sqlEmpleado = "INSERT INTO empleados (id_cuenta, dni, direccion, cargo, rol) VALUES (?, ?, ?, ?, 'EMPLEADO')";
