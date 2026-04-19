@@ -14,13 +14,13 @@ import java.time.LocalDate;
 public class Alquiler {
 
     private String idAlquiler;
-    private String idUsuario;
+    private String idCliente;
     private String idProducto;
-    private LocalDate fechaSalida;
-    private LocalDate fechaEntregaPactada;
-    private LocalDate fechaDevolucionReal;
+    private LocalDate fechaAlquiler;
+    private LocalDate fechaPactada;
+    private LocalDate fechaDevolucion;
     private double costoTotal;
-    private boolean vigente;
+    private String estado;
 
     /**
      * Constructor para registrar un nuevo alquiler activo. Al crearse, el
@@ -28,22 +28,22 @@ public class Alquiler {
      * real queda inicializada en null.
      *
      * @param idAlquiler Identificador único de la transacción (ej: ALQ-0001).
-     * @param idUsuario Identificador del cliente que realiza la renta.
+     * @param idCliente Identificador del cliente que realiza la renta.
      * @param idProducto Identificador del producto (Película/Juego) rentado.
      * @param fechaSalida Fecha en la que el producto sale del inventario.
-     * @param fechaEntregaPactada Fecha límite para devolver el producto sin
+     * @param fechaPactada Fecha límite para devolver el producto sin
      * recargos.
      * @param costoTotal Monto final cobrado al cliente tras aplicar descuentos.
      */
-    public Alquiler(String idAlquiler, String idUsuario, String idProducto, LocalDate fechaSalida, LocalDate fechaEntregaPactada, double costoTotal) {
+    public Alquiler(String idAlquiler, String idCliente, String idProducto, LocalDate fechaSalida, LocalDate fechaPactada, double costoTotal) {
         this.idAlquiler = idAlquiler;
-        this.idUsuario = idUsuario;
+        this.idCliente = idCliente;
         this.idProducto = idProducto;
-        this.fechaSalida = fechaSalida;
-        this.fechaEntregaPactada = fechaEntregaPactada;
+        this.fechaAlquiler = fechaSalida;
+        this.fechaPactada = fechaPactada;
         this.costoTotal = costoTotal;
-        this.vigente = true;
-        this.fechaDevolucionReal = null;
+        this.estado = "ACTIVO";
+        this.fechaDevolucion = null;
     }
 
     /**
@@ -69,17 +69,17 @@ public class Alquiler {
      *
      * @return El ID del cliente vinculado.
      */
-    public String getIdUsuario() {
-        return idUsuario;
+    public String getIdCliente() {
+        return idCliente;
     }
 
     /**
      * Vincula el alquiler a un usuario específico.
      *
-     * @param idUsuario El ID del cliente.
+     * @param idCliente El ID del cliente.
      */
-    public void setIdUsuario(String idUsuario) {
-        this.idUsuario = idUsuario;
+    public void setIdCliente(String idCliente) {
+        this.idCliente = idCliente;
     }
 
     /**
@@ -105,17 +105,17 @@ public class Alquiler {
      *
      * @return La fecha de salida.
      */
-    public LocalDate getFechaSalida() {
-        return fechaSalida;
+    public LocalDate getFechaAlquiler() {
+        return fechaAlquiler;
     }
 
     /**
      * Establece la fecha de inicio del alquiler.
      *
-     * @param fechaSalida La fecha de salida.
+     * @param fechaAlquiler La fecha de salida.
      */
-    public void setFechaSalida(LocalDate fechaSalida) {
-        this.fechaSalida = fechaSalida;
+    public void setFechaAlquiler(LocalDate fechaAlquiler) {
+        this.fechaAlquiler = fechaAlquiler;
     }
 
     /**
@@ -123,17 +123,17 @@ public class Alquiler {
      *
      * @return La fecha máxima pactada.
      */
-    public LocalDate getFechaEntregaPactada() {
-        return fechaEntregaPactada;
+    public LocalDate getFechaPactada() {
+        return fechaPactada;
     }
 
     /**
      * Establece la fecha límite para la devolución.
      *
-     * @param fechaEntregaPactada La nueva fecha de entrega máxima.
+     * @param fechaPactada La nueva fecha de entrega máxima.
      */
-    public void setFechaEntregaPactada(LocalDate fechaEntregaPactada) {
-        this.fechaEntregaPactada = fechaEntregaPactada;
+    public void setFechaPactada(LocalDate fechaPactada) {
+        this.fechaPactada = fechaPactada;
     }
 
     /**
@@ -141,18 +141,18 @@ public class Alquiler {
      *
      * @return La fecha de devolución real, o null si aún no se ha devuelto.
      */
-    public LocalDate getFechaDevolucionReal() {
-        return fechaDevolucionReal;
+    public LocalDate getFechaDevolucion() {
+        return fechaDevolucion;
     }
 
     /**
      * Registra la fecha de devolución efectiva. Este método suele llamarse al
      * momento de finalizar la vigencia del alquiler.
      *
-     * @param fechaDevolucionReal La fecha de retorno al inventario.
+     * @param fechaDevolucion La fecha de retorno al inventario.
      */
-    public void setFechaDevolucionReal(LocalDate fechaDevolucionReal) {
-        this.fechaDevolucionReal = fechaDevolucionReal;
+    public void setFechaDevolucion(LocalDate fechaDevolucion) {
+        this.fechaDevolucion = fechaDevolucion;
     }
 
     /**
@@ -177,20 +177,20 @@ public class Alquiler {
      * Indica si el alquiler se encuentra activo (el cliente aún tiene el
      * producto).
      *
-     * @return {@code true} si el alquiler es vigente; {@code false} si ha
+     * @return {@code true} si el alquiler es estado; {@code false} si ha
      * finalizado.
      */
-    public boolean isVigente() {
-        return vigente;
+    public String isEstado() {
+        return estado;
     }
 
     /**
      * Actualiza el estado de vigencia del alquiler. Útil para procesos de
      * archivado e historial.
      *
-     * @param vigente El nuevo estado de vigencia.
+     * @param estado El nuevo estado de vigencia.
      */
-    public void setVigente(boolean vigente) {
-        this.vigente = vigente;
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 }

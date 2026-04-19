@@ -17,7 +17,7 @@ import java.util.List;
  * @author Manuel Salazar
  * @since 0.2
  */
-public class PeliculaRepository {
+public class PeliculaRepository extends BareRepository<Pelicula>{
 
     /**
      * Constructor por defecto.
@@ -32,7 +32,8 @@ public class PeliculaRepository {
      * @param pelicula Objeto de pelicula a almacenar.
      * @return Verdadero si se completo la accion.
      */
-    public boolean addPelicula(Pelicula pelicula) {
+    @Override
+    public boolean add(Pelicula pelicula) {
         String sqlProducto = "INSERT INTO productos (nombre, costo, stock, tipo_producto) VALUES (?, ?, ?,'PELICULA')";
         String sqlPelicula = "INSERT INTO peliculas (id_producto, formato, duracion) VALUES (?, ?, ?)";
 
@@ -137,6 +138,7 @@ public class PeliculaRepository {
      * @return El objeto encontrado. Retorna nulo si no existen registros para
      * esta ID.
      */
+    @Override
     public Pelicula getById(String idBuscado) {
         int idNumerico = Integer.parseInt(idBuscado.replaceAll("[^0-9]", ""));
 
@@ -153,6 +155,7 @@ public class PeliculaRepository {
      *
      * @return Lista de objetos de tipo pelicula.
      */
+    @Override
     public List<Pelicula> getAll() {
         List<Pelicula> peliculas = new ArrayList<>();
         // 1. SQL sin el WHERE para traer toda la tabla
@@ -293,6 +296,7 @@ public class PeliculaRepository {
      *
      * @return Cantidad de elementos encontrados.
      */
+    @Override
     public int cantidad() {
         String sql = "SELECT COUNT(*) FROM peliculas";
 

@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List"%>
+<%@ page import="co.edu.udistrital.model.dto.*" %>
 <%@ page import="co.edu.udistrital.model.entities.*" %>
-<%@ page import="co.edu.udistrital.model.repository.*"%>
 <!doctype html>
 <html lang="es">
 
@@ -168,43 +168,25 @@
                         </header>
                         <div class="product-list">
                             <%
-                                List<Alquiler> alquileres = (List<Alquiler>) request.getAttribute("alquileres");
+                                List<AlquilerDetalleDTO> alquileres = (List<AlquilerDetalleDTO>) request.getAttribute("alquileres");
                                 if (alquileres == null || alquileres.isEmpty()) {
                             %>
                             <p style="color: var(--color-text-secondary); padding: 1rem;">No tienes alquileres vigentes.</p>
                             <%
                             } else {
-                                JuegoRepository jr = (JuegoRepository) getServletContext().getAttribute("juegoRepository");
-                                PeliculaRepository pr = (PeliculaRepository) getServletContext().getAttribute("peliculaRepository");
-
                                 int count = 0;
-
-                                for (Alquiler a : alquileres) {
+                                for (AlquilerDetalleDTO a : alquileres) {
                                     if (count == 6) {
                                         break;
-                                    }
-
-                                    String aName = "Producto";
-                                    String aType = a.getIdProducto().startsWith("Jg") ? "Juego" : "Película";
-                                    if (aType.equals("Juego") && jr != null) {
-                                        Juego jj = jr.obtenerPorId(a.getIdProducto());
-                                        if (jj != null) {
-                                            aName = jj.getNombreProducto();
-                                        }
-                                    } else if (pr != null) {
-                                        Pelicula pp = pr.obtenerPorId(a.getIdProducto());
-                                        if (pp != null) {
-                                            aName = pp.getNombreProducto();
-                                        }
                                     }
                             %>
                             <article class="product-card">
                                 <div class="product-card-presentation">
-                                    <span><%= aType%></span>
-                                    <h3 class="product-card-title"><%= aName%></h3>
+                                    <span><%= a.getTipoProducto()%></span>
+                                    <h3 class="product-card-title"><%= a.getNombreProducto()%></h3>
                                 </div>
                                 <div class="product-card-details">
-                                    <span>Retorno: <%= a.getFechaEntregaPactada()%></span>
+                                    <span>Retorno: <%= a.getAlquiler().getFechaPactada()%></span>
                                 </div>
                             </article>
                             <%

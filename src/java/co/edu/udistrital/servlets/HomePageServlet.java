@@ -4,6 +4,7 @@
  */
 package co.edu.udistrital.servlets;
 
+import co.edu.udistrital.model.dto.AlquilerDetalleDTO;
 import co.edu.udistrital.model.entities.Alquiler;
 import co.edu.udistrital.model.entities.Cliente;
 import co.edu.udistrital.model.entities.Juego;
@@ -59,8 +60,8 @@ public class HomePageServlet extends HttpServlet {
         Cliente cliente = (Cliente) session.getAttribute("usuarioLogueado");
 
         // --- LÓGICA DE NOVEDADES (Mezcla de Juegos y Pelis) ---
-        List<Juego> listaJuegos = jr.obtenerTodos().reversed();
-        List<Pelicula> listaPeliculas = pr.obtenerTodos().reversed();
+        List<Juego> listaJuegos = jr.getAll().reversed();
+        List<Pelicula> listaPeliculas = pr.getAll().reversed();
         List<Producto> novedades = new ArrayList<>();
 
         int lim = Math.min(6, listaJuegos.size() + listaPeliculas.size());
@@ -76,10 +77,30 @@ public class HomePageServlet extends HttpServlet {
         }
 
         // --- LÓGICA DE ALQUILERES VIGENTES ---
-        List<Alquiler> misAlquileres = ar.obtenerPorUsuario(cliente.getNombreUsuario())
-                .stream()
-                .filter(Alquiler::isVigente)
-                .collect(Collectors.toList());
+        List<Alquiler> misAlquileres = ar.getByCustomer(cliente.getId());
+        List<AlquilerDetalleDTO> listaParaVista = new ArrayList<>();
+
+        for (Alquiler a : misAlquileres) {
+            String nombre = "Desconocido";
+            String tipo = a.getIdProducto().startsWith("Jg") ? "Juego" : "Película";
+
+            if (tipo.equals("Juego")) {
+                Juego j = jr.getById(a.getIdProducto());
+                if (j != null) {
+                    nombre = j.getNombreProducto();
+                }
+            } else {
+                Pelicula p = pr.getById(a.getIdProducto());
+                if (p != null) {
+                    nombre = p.getNombreProducto();
+                }
+            }
+
+            listaParaVista.add(new AlquilerDetalleDTO(a, nombre, tipo));
+        }
+
+// Pasar datos limpios al JSP
+        request.setAttribute("alquileresDetalle", listaParaVista);
 
         // Pasar datos al JSP
         request.setAttribute("novedades", novedades);
