@@ -19,7 +19,7 @@ import java.util.List;
  * @author Manuel Salazar
  * @since 0.2
  */
-public class AlquilerRepository {
+public class AlquilerRepository extends BareRepository<Alquiler> {
 
     /**
      * Constructo por defecto
@@ -34,7 +34,8 @@ public class AlquilerRepository {
      * @param alquiler Objeto a registrar en la base de datos.
      * @return verdadero si la adicion fue exitosa, falso en caso contrario.
      */
-    public boolean addAlquiler(Alquiler alquiler) {
+    @Override
+    public boolean add(Alquiler alquiler) {
         String sql = "INSERT INTO alquileres (id_cliente, id_producto, fecha_inicio, fecha_devolucion, costo, estado) VALUES (?, ?, ?, ?, ?,'ACTIVO')";
 
         try (Connection con = DriverManager.getConnection(Config.URL,
@@ -142,6 +143,7 @@ public class AlquilerRepository {
      * @param id Identificador del alquiler.
      * @return El objeto de tipo Alquiler o null si no extiste.
      */
+    @Override
     public Alquiler getById(String id) {
         int idNumerico = Integer.parseInt(id.replaceAll("[^0-9]", ""));
 
@@ -156,7 +158,8 @@ public class AlquilerRepository {
      *
      * @return Listado de alquileres.
      */
-    public List<Alquiler> obtenerTodos() {
+    @Override
+    public List<Alquiler> getAll() {
         List<Alquiler> alquileres = new ArrayList<>();
         // 1. SQL sin el WHERE para traer toda la tabla
         String sql = "SELECT * FROM alquileres WHERE estado IN ('ACTIVO', 'RETRASADO')";
@@ -181,6 +184,7 @@ public class AlquilerRepository {
      *
      * @return La cantidad de alquilres no devueltos en la base de datos.
      */
+    @Override
     public int cantidad() {
         String sql = "SELECT COUNT(*) FROM alquileres WHERE estado IN ('ACTIVO', 'RETRASADO')";
 

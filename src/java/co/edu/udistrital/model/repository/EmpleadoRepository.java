@@ -17,7 +17,7 @@ import java.util.List;
  * @author Manuel Salazar
  * @since 0.2
  */
-public class EmpleadoRepository {
+public class EmpleadoRepository extends BareRepository<Empleado> {
 
     public EmpleadoRepository() {
     }
@@ -30,7 +30,8 @@ public class EmpleadoRepository {
      * @param empleado Instancia con los datos de cargo y contacto.
      * @return {@code true} si la operación fue exitosa.
      */
-    public boolean addEmpleado(Empleado empleado) {
+    @Override
+    public boolean add(Empleado empleado) {
         String sqlCuenta = "INSERT INTO cuentas (username, nombre, contrasenia, correo, telefono) VALUES (?, ?, ?, ?, ?)";
         String sqlCliente = "INSERT INTO empleados (id_cuenta, dni, direccion, cargo) VALUES (?, ?, ?, ?)";
 
@@ -131,6 +132,7 @@ public class EmpleadoRepository {
      * @param idBuscado ID con prefijo 'Em' o 'Ad'.
      * @return Objeto {@link Empleado} o {@code null} si no se encuentra.
      */
+    @Override
     public Empleado getById(String idBuscado) {
         int idNumerico = Integer.parseInt(idBuscado.replaceAll("[^0-9]", ""));
 
@@ -177,6 +179,7 @@ public class EmpleadoRepository {
      *
      * @return Lista de todos los empelados.
      */
+    @Override
     public List<Empleado> getAll() {
         List<Empleado> empleados = new ArrayList<>();
         // 1. SQL sin el WHERE para traer toda la tabla
@@ -320,6 +323,7 @@ public class EmpleadoRepository {
      *
      * @return clatidad de cuentas de empleados.
      */
+    @Override
     public int cantidad() {
         String sql = "SELECT COUNT(*) FROM empleados";
 

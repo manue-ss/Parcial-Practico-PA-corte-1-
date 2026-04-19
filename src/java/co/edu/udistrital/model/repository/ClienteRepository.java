@@ -18,7 +18,7 @@ import java.util.List;
  *
  * @author Manuel Salazar
  */
-public class ClienteRepository {
+public class ClienteRepository extends BareRepository<Cliente>{
 
     public ClienteRepository() {
     }
@@ -31,7 +31,8 @@ public class ClienteRepository {
      * @param cliente Objeto con los datos de identidad y financieros.
      * @return {@code true} si se crearon ambos registros exitosamente.
      */
-    public boolean addCliente(Cliente cliente) {
+    @Override
+    public boolean add(Cliente cliente) {
         String sqlCuenta = "INSERT INTO cuentas (username, nombre, contrasenia, correo, telefono) VALUES (?, ?, ?, ?, ?)";
         String sqlCliente = "INSERT INTO clientes (id_cuenta, saldo, membresia, fecha_membresia) VALUES (?, ?, ?, ?)";
 
@@ -144,6 +145,7 @@ public class ClienteRepository {
      * @param idBuscado Cadena alfanumérica del identificador.
      * @return El {@link Cliente} encontrado o {@code null}.
      */
+    @Override
     public Cliente getById(String idBuscado) {
         int idNumerico = Integer.parseInt(idBuscado.replaceAll("[^0-9]", ""));
 
@@ -191,6 +193,7 @@ public class ClienteRepository {
      *
      * @return Lista de todos los clientes.
      */
+    @Override
     public List<Cliente> getAll() {
         List<Cliente> clientes = new ArrayList<>();
         // 1. SQL sin el WHERE para traer toda la tabla
@@ -337,6 +340,7 @@ public class ClienteRepository {
      *
      * @return El número total de clientes registrados.
      */
+    @Override
     public int cantidad() {
         String sql = "SELECT COUNT(*) FROM clientes";
 

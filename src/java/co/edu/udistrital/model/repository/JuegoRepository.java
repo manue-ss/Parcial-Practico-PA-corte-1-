@@ -1,5 +1,6 @@
 package co.edu.udistrital.model.repository;
 
+import co.edu.udistrital.model.entities.Alquiler;
 import co.edu.udistrital.model.entities.Juego;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -18,7 +19,7 @@ import java.util.List;
  * @author Manuel Salazar
  * @since 0.2
  */
-public class JuegoRepository {
+public class JuegoRepository extends BareRepository<Juego>{
 
     public JuegoRepository() {
     }
@@ -32,7 +33,8 @@ public class JuegoRepository {
      * @return {@code true} si la operación fue exitosa y confirmada;
      * {@code false} en caso de error.
      */
-    public boolean addJuego(Juego juego) {
+    @Override
+    public boolean add(Juego juego) {
         String sqlProducto = "INSERT INTO productos (nombre, costo, stock, tipo_producto) VALUES (?, ?, ?,'JUEGO')";
         String sqlJuego = "INSERT INTO juegos (id_producto, plataforma, genero) VALUES (?, ?, ?)";
 
@@ -136,6 +138,7 @@ public class JuegoRepository {
      * @param idBuscado ID en formato String (ej: "Jg00001").
      * @return Objeto {@link Juego} o {@code null} si no existe.
      */
+    @Override
     public Juego getById(String idBuscado) {
         int idNumerico = Integer.parseInt(idBuscado.replaceAll("[^0-9]", ""));
 
@@ -153,6 +156,7 @@ public class JuegoRepository {
      *
      * @return Una {@link List} de objetos {@link Juego}.
      */
+    @Override
     public List<Juego> getAll() {
         List<Juego> juegos = new ArrayList<>();
         // 1. SQL sin el WHERE para traer toda la tabla
@@ -296,6 +300,7 @@ public class JuegoRepository {
      *
      * @return Entero con la cuenta total de registros en la tabla juegos.
      */
+    @Override
     public int cantidad() {
         String sql = "SELECT COUNT(*) FROM juegos";
 
