@@ -11,19 +11,17 @@ public class ProcesarAlquiler {
     private ClienteRepository clienteRepo;
     private JuegoRepository juegoRepo;
     private PeliculaRepository peliRepo;
-    private ActualizarAlquilados updateAlquilados;
 
     public ProcesarAlquiler(AlquilerRepository alq, ClienteRepository cli, JuegoRepository jg, PeliculaRepository pe) {
         this.alquilerRepo = alq;
         this.clienteRepo = cli;
         this.juegoRepo = jg;
         this.peliRepo = pe;
-        this.updateAlquilados = new ActualizarAlquilados(jg, pe);
     }
 
     public String rentar(String idClienteOrUser, String idProducto, LocalDate devEstimada) {
         // Buscamos al cliente (idClienteOrUser debe ser la KEY del Map: el username)
-        Cliente c = clienteRepo.obtenerPorId(idClienteOrUser);
+        Cliente c = clienteRepo.getById(idClienteOrUser);
         if (c == null) {
             return "Error: Cliente no encontrado en el sistema.";
         }
@@ -32,13 +30,13 @@ public class ProcesarAlquiler {
 
         // Validación de Producto y Stock
         if (idProducto.startsWith("Jg")) {
-            Juego j = juegoRepo.obtenerPorId(idProducto);
+            Juego j = juegoRepo.getById(idProducto);
             if (j == null || j.getStock() <= 0) {
                 return "Producto no disponible o sin existencias.";
             }
             costoBaseDia = j.calcularPrecioFinal();
         } else if (idProducto.startsWith("Pe")) {
-            Pelicula p = peliRepo.obtenerPorId(idProducto);
+            Pelicula p = peliRepo.getById(idProducto);
             if (p == null || p.getStock() <= 0) {
                 return "Producto no disponible o sin existencias.";
             }
@@ -66,26 +64,21 @@ public class ProcesarAlquiler {
 
         // --- INICIO DE TRANSACCIÓN ---
         // 1. Modificar Alquiler
-        boolean reservado = updateAlquilados.modificarPrestamo(idProducto, false);
-        if (!reservado) {
-            return "Error crítico al actualizar los alquilados.";
-        }
 
         // 2. Rebajar Saldo y Persistir Cliente
         c.setSaldo(c.getSaldo() - costoTotal);
-        clienteRepo.guardar(c);
+        clienteRepo.update(c);
 
         // 3. Registrar Alquiler y Persistir
-        String idAlquiler = "Alq" + String.format("%04d", alquilerRepo.cantidad() + 1);
         Alquiler alq = new Alquiler(
-                idAlquiler,
-                c.getNombreUsuario(), // Usamos el nombre de usuario para el registro
+                "",
+                c.getId(), // Usamos el nombre de usuario para el registro
                 idProducto,
                 LocalDate.now(),
                 devEstimada,
                 costoTotal
         );
-        alquilerRepo.guardar(alq);
+        alquilerRepo.add(alq);
 
         return "OK";
     }

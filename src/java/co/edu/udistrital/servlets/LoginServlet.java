@@ -1,27 +1,16 @@
 package co.edu.udistrital.servlets;
 
 import co.edu.udistrital.model.dto.ClienteDTO;
-import co.edu.udistrital.model.entities.Alquiler;
 import co.edu.udistrital.model.entities.Cliente;
-import co.edu.udistrital.model.entities.Juego;
-import co.edu.udistrital.model.entities.Pelicula;
-import co.edu.udistrital.model.entities.Producto;
-import co.edu.udistrital.model.repository.AlquilerRepository;
 import co.edu.udistrital.model.repository.ClienteRepository;
-import co.edu.udistrital.model.repository.JuegoRepository;
-import co.edu.udistrital.model.repository.PeliculaRepository;
 import co.edu.udistrital.model.service.IniciarSesion;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Controlador encargado de gestionar el inicio de sesión de los clientes.

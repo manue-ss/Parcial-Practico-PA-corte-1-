@@ -92,7 +92,7 @@
                     <div class="product-list">
                         <% 
                             JuegoRepository jr = new JuegoRepository();
-                            List<Juego> juegos = jr.obtenerTodos();
+                            List<Juego> juegos = jr.getAll();
                             if(juegos.isEmpty()) { 
                         %>
                             <p>No hay juegos disponibles en este momento.</p>

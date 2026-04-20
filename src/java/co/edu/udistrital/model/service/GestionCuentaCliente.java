@@ -21,15 +21,15 @@ public class GestionCuentaCliente {
         this.clienteRepo = clienteRepo;
     }
 
-    public boolean recargarSaldo(String nombreUsuario, double monto) {
+    public boolean recargarSaldo(String id, double monto) {
         if (monto <= 0) {
             return false;
         }
 
-        Cliente c = clienteRepo.obtenerPorUsername(nombreUsuario);
+        Cliente c = clienteRepo.getById(id);
         if (c != null) {
             c.setSaldo(c.getSaldo() + monto);
-            clienteRepo.guardar(c);
+            clienteRepo.update(c);
             return true;
         }
         return false;
@@ -40,7 +40,7 @@ public class GestionCuentaCliente {
      * saldo cubra el costo del nuevo plan.
      */
     public boolean cambiarMembresia(String nombreUsuario, String planStr) {
-        Cliente c = clienteRepo.obtenerPorUsername(nombreUsuario);
+        Cliente c = clienteRepo.getByUsername(nombreUsuario);
 
         if (c != null && planStr != null) {
             try {
@@ -50,7 +50,7 @@ public class GestionCuentaCliente {
                 if (c.getSaldo() >= nueva.getCostoMembresia()) {
                     c.setSaldo(c.getSaldo() - nueva.getCostoMembresia());
                     c.setMembresia(nueva);
-                    clienteRepo.guardar(c);
+                    clienteRepo.update(c);
                     return true;
                 }
             } catch (IllegalArgumentException e) {
@@ -61,7 +61,7 @@ public class GestionCuentaCliente {
     }
 
     public boolean actualizarDatos(String nombreUsuario, String fullName, String phone, String email, String password) {
-        Cliente c = clienteRepo.obtenerPorUsername(nombreUsuario);
+        Cliente c = clienteRepo.getByUsername(nombreUsuario);
 
         if (c != null) {
             c.setNombreCompleto(fullName);
@@ -72,7 +72,7 @@ public class GestionCuentaCliente {
                 c.setContrasenia(SecurityUtil.encriptarSHA256(password));
             }
 
-            clienteRepo.guardar(c);
+            clienteRepo.update(c);
             return true;
         }
         return false;

@@ -48,7 +48,7 @@ public class UpdateMembershipServlet extends HttpServlet {
             if (service.cambiarMembresia(username, nuevaMembresia)) {
 
                 // REFRESCO DE SESIÓN: Buscamos por el método lógico obtenerPorUsername
-                Cliente clienteActualizado = repo.obtenerPorUsername(username);
+                Cliente clienteActualizado = repo.getByUsername(username);
                 session.setAttribute("usuarioLogueado", clienteActualizado);
 
             } else {

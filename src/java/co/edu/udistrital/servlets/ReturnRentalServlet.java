@@ -1,10 +1,6 @@
 package co.edu.udistrital.servlets;
 
 import co.edu.udistrital.model.repository.AlquilerRepository;
-import co.edu.udistrital.model.repository.ClienteRepository;
-import co.edu.udistrital.model.repository.JuegoRepository;
-import co.edu.udistrital.model.repository.PeliculaRepository;
-import co.edu.udistrital.model.service.DevolverAlquiler;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -48,17 +44,12 @@ public class ReturnRentalServlet extends HttpServlet {
 
             // 2. Obtención de Repositorios desde el Contexto de la aplicación
             AlquilerRepository ar = (AlquilerRepository) getServletContext().getAttribute("alquilerRepository");
-            ClienteRepository cr = (ClienteRepository) getServletContext().getAttribute("clienteRepository");
-            JuegoRepository jr = (JuegoRepository) getServletContext().getAttribute("juegoRepository");
-            PeliculaRepository pr = (PeliculaRepository) getServletContext().getAttribute("peliculaRepository");
 
-            // 3. Inicialización del Servicio con persistencia compartida
-            DevolverAlquiler service = new DevolverAlquiler(ar, cr, jr, pr);
 
             // 4. Ejecución de la devolución
             String idAlquiler = request.getParameter("idAlquiler");
             if (idAlquiler != null && !idAlquiler.isBlank()) {
-                service.regresarProducto(idAlquiler);
+                ar.returnAlquiler(idAlquiler);
             }
 
             // 5. Redirección al historial de alquileres actualizado

@@ -2,6 +2,7 @@ package co.edu.udistrital.servlets;
 
 import co.edu.udistrital.model.entities.Empleado;
 import co.edu.udistrital.model.repository.EmpleadoRepository;
+import co.edu.udistrital.util.SecurityUtil;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -38,18 +39,18 @@ public class RegisterEmployeeServlet extends HttpServlet {
             String generatedId = "EM-" + System.currentTimeMillis() % 10000;
 
             Empleado nuevoEmpleado = new Empleado(
-                    dni, 
-                    direccion, 
-                    cargo, 
-                    generatedId, 
-                    nombreUsuario, 
-                    contrasenia, 
-                    nombreCompleto, 
-                    correo, 
+                    dni,
+                    direccion,
+                    cargo,
+                    generatedId,
+                    nombreUsuario,
+                    SecurityUtil.encriptarSHA256(contrasenia),
+                    nombreCompleto,
+                    correo,
                     telefono
             );
 
-            repository.guardar(nuevoEmpleado);
+            repository.add(nuevoEmpleado);
 
             response.sendRedirect("employeeManagement.jsp?success=1");
         }

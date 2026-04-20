@@ -40,10 +40,10 @@ public class SignupValidator {
         }
 
         // Verificar unicidad
-        if (repo.existeUsername(dto.getNombreUsuario())) {
+        if (repo.existUsername(dto.getNombreUsuario())) {
             return ValidationResult.error("nombreUsuario", "El nombre de usuario ya existe");
         }
-        if (repo.existeCorreo(dto.getCorreo())) {
+        if (repo.existMail(dto.getCorreo())) {
             return ValidationResult.error("correo", "El correo ya está registrado");
         }
 

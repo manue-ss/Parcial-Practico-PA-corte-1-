@@ -84,10 +84,10 @@
                 double costoBase = 0.0;
                 if (idProducto != null) {
                     if (idProducto.startsWith("Jg")) {
-                        Juego j = new JuegoRepository().obtenerPorId(idProducto);
+                        Juego j = new JuegoRepository().getById(idProducto);
                         if (j != null) { nombreProd = j.getNombreProducto(); costoBase = j.getCostoBase(); }
-                    } else if (idProducto.startsWith("Pe")) {
-                        Pelicula p = new PeliculaRepository().obtenerPorId(idProducto);
+                    } else if (idProducto.startsWith("Pl")) {
+                        Pelicula p = new PeliculaRepository().getById(idProducto);
                         if (p != null) { nombreProd = p.getNombreProducto(); costoBase = p.getCostoBase(); }
                     }
                 }
@@ -113,7 +113,7 @@
                     </div>
 
                     <div class="total-estimate-container">
-                        <span class="total-estimate-price">Costo Total Estimado: <span>Mínimo $<%= String.format("%.2f", costoBase) %></span></span>
+                        <span class="total-estimate-price">Costo Base: <span>Mínimo $<%= String.format("%.2f", costoBase) %></span></span>
                         <p class="total-estimate-note">(El costo final incluirá recargos de cálculo y descuentos de membresía a confirmar en la facturación)</p>
                     </div>
 

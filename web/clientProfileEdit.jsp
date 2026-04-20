@@ -5,7 +5,7 @@
     String idClienteForm = request.getParameter("id");
     ClienteRepository cr = (ClienteRepository) getServletContext().getAttribute("clienteRepository");
     if(cr == null) { cr = new ClienteRepository(); }
-    Cliente clienteToEdit = cr.obtenerPorId(idClienteForm);
+    Cliente clienteToEdit = cr.getById(idClienteForm);
 
     if (clienteToEdit == null) {
         response.sendRedirect("clients.jsp");

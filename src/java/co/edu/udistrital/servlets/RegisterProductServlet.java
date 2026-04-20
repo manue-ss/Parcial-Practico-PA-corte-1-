@@ -4,7 +4,6 @@ import co.edu.udistrital.model.entities.Juego;
 import co.edu.udistrital.model.entities.Pelicula;
 import co.edu.udistrital.model.repository.JuegoRepository;
 import co.edu.udistrital.model.repository.PeliculaRepository;
-import co.edu.udistrital.model.service.RegistrarProducto;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -29,8 +28,6 @@ public class RegisterProductServlet extends HttpServlet {
             response.sendError(500, "Los repositorios no están cargados.");
             return;
         }
-
-        RegistrarProducto service = new RegistrarProducto(jg, pe);
 
         try {
             // 2. Captura de parámetros
@@ -58,7 +55,7 @@ public class RegisterProductServlet extends HttpServlet {
                 j.setStock(stock);
                 j.setPlataforma(espe);
                 j.setGenero(detalle);
-                service.registrarJuego(j);
+                jg.add(j);
             } else if ("PELICULA".equalsIgnoreCase(tipo)) {
                 Pelicula p = new Pelicula();
                 p.setNombreProducto(nombre);
@@ -66,7 +63,7 @@ public class RegisterProductServlet extends HttpServlet {
                 p.setStock(stock);
                 p.setFormato(espe);
                 p.setDuracion(detalle);
-                service.registrarPelicula(p);
+                pe.add(p);
             }
 
             // 4. ÉXITO: Redirección física (limpia la URL)

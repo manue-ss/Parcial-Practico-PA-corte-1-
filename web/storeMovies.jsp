@@ -92,7 +92,7 @@
                         <div class="product-list">
                             <%
                                 PeliculaRepository pr = new PeliculaRepository();
-                                List<Pelicula> peliculas = pr.obtenerTodos();
+                                List<Pelicula> peliculas = pr.getAll();
                                 if (peliculas.isEmpty()) {
                             %>
                             <p>No hay películas disponibles en este momento.</p>

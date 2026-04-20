@@ -114,8 +114,8 @@
                                 <%
                                     JuegoRepository jr = new JuegoRepository();
                                     PeliculaRepository pr = new PeliculaRepository();
-                                    List<Juego> juegos = jr.obtenerTodos();
-                                    List<Pelicula> peliculas = pr.obtenerTodos();
+                                    List<Juego> juegos = jr.getAll();
+                                    List<Pelicula> peliculas = pr.getAll();
 
                                     for (Juego j : juegos) {
                                 %>

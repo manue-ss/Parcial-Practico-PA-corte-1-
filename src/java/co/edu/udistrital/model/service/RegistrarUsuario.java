@@ -30,6 +30,6 @@ public class RegistrarUsuario {
 
         nuevoCliente = ClienteMapper.toEntity(cliente);
 
-        repositorio.guardar(nuevoCliente);
+        repositorio.add(nuevoCliente);
     }
 }

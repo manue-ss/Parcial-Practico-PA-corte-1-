@@ -46,7 +46,7 @@ public class SaveClientEditsServlet extends HttpServlet {
         if (usernameKey != null && !usernameKey.trim().isEmpty()) {
 
             // Buscamos el objeto usando el USERNAME como identificador
-            Cliente clienteToUpdate = repository.obtenerPorId(usernameKey);
+            Cliente clienteToUpdate = repository.getByUsername(usernameKey);
 
             if (clienteToUpdate != null) {
                 // Actualizamos los atributos del objeto que está en el Map
@@ -56,7 +56,7 @@ public class SaveClientEditsServlet extends HttpServlet {
                 clienteToUpdate.setSaldo(saldo);
 
                 // IMPORTANTE: Este método debe persistir los cambios en el JSON
-                repository.guardar(clienteToUpdate);
+                repository.update(clienteToUpdate);
 
                 System.out.println("LOG: Cliente " + usernameKey + " actualizado con éxito.");
             } else {

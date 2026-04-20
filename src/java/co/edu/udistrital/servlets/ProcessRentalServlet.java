@@ -17,7 +17,7 @@ public class ProcessRentalServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         request.setCharacterEncoding("UTF-8");
         HttpSession session = request.getSession(false);
 
@@ -34,10 +34,18 @@ public class ProcessRentalServlet extends HttpServlet {
         PeliculaRepository pr = (PeliculaRepository) getServletContext().getAttribute("peliculaRepository");
 
         // Inicialización de seguridad por si el Listener no ha corrido
-        if (ar == null) ar = new AlquilerRepository();
-        if (cr == null) cr = new ClienteRepository();
-        if (jr == null) jr = new JuegoRepository();
-        if (pr == null) pr = new PeliculaRepository();
+        if (ar == null) {
+            ar = new AlquilerRepository();
+        }
+        if (cr == null) {
+            cr = new ClienteRepository();
+        }
+        if (jr == null) {
+            jr = new JuegoRepository();
+        }
+        if (pr == null) {
+            pr = new PeliculaRepository();
+        }
 
         // 3. Captura de datos
         Cliente cliente = (Cliente) session.getAttribute("usuarioLogueado");
@@ -46,25 +54,30 @@ public class ProcessRentalServlet extends HttpServlet {
 
         try {
             LocalDate fechaDev = LocalDate.parse(fechaDevString);
-            
+
             // Instanciar el servicio con los repositorios
             ProcesarAlquiler service = new ProcesarAlquiler(ar, cr, jr, pr);
 
             // EJECUCIÓN: Pasamos el nombre de usuario porque es la llave del repositorio
-            String resultado = service.rentar(cliente.getNombreUsuario(), idProducto, fechaDev);
+            String resultado = service.rentar(cliente.getId(), idProducto, fechaDev);
+
+            System.out.println(resultado);
 
             if ("OK".equals(resultado)) {
                 // Éxito: Redirigir al historial de alquileres
                 response.sendRedirect("rentals.jsp");
             } else {
                 // Error de negocio (saldo, stock, etc.): Volver con el mensaje
+                System.out.println("Fallo error de negocio");
                 request.setAttribute("error", resultado);
                 request.getRequestDispatcher("confirmarAlquiler.jsp?idProducto=" + idProducto).forward(request, response);
             }
 
         } catch (Exception e) {
-            // Error técnico (fecha mal formateada o nula)
-            request.setAttribute("error", "Error en el procesamiento: Verifique las fechas seleccionadas.");
+            System.err.println("CAUSA REAL DEL ERROR: " + e.getMessage());
+            e.printStackTrace();
+
+            request.setAttribute("error", "Error técnico: " + e.getMessage());
             request.getRequestDispatcher("confirmarAlquiler.jsp?idProducto=" + idProducto).forward(request, response);
         }
     }
