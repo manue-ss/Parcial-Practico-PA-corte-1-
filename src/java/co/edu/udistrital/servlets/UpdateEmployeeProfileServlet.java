@@ -43,7 +43,7 @@ public class UpdateEmployeeProfileServlet extends HttpServlet {
             empleadoActual.setTelefono(telefono);
             empleadoActual.setDireccion(direccion);
 
-            repository.guardar(empleadoActual);
+            repository.update(empleadoActual);
             session.setAttribute("empleadoActual", empleadoActual);
 
             response.sendRedirect("employeeProfile.jsp");

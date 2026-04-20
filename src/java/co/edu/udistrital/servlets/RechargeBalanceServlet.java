@@ -48,10 +48,9 @@ public class RechargeBalanceServlet extends HttpServlet {
                 double monto = Double.parseDouble(request.getParameter("monto"));
 
                 // 3. Ejecutar lógica de negocio
-                if (service.recargarSaldo(cliente.getNombreUsuario(), monto)) {
-                    // Actualizamos el objeto en la sesión para que el JSP vea el nuevo saldo inmediatamente
-                    // Importante: El service debería haber actualizado los datos en el repo/json
-                    session.setAttribute("usuarioLogueado", cliente);
+                if (service.recargarSaldo(cliente.getId(), monto)) {
+                    Cliente clienteActual = repositorio.getById(cliente.getId());
+                    session.setAttribute("usuarioLogueado", clienteActual);
                 }
 
                 response.sendRedirect("customerProfile.jsp");

@@ -89,7 +89,7 @@ public class HomePageServlet extends HttpServlet {
                 if (j != null) {
                     nombre = j.getNombreProducto();
                 }
-            } else {
+            } else{
                 Pelicula p = pr.getById(a.getIdProducto());
                 if (p != null) {
                     nombre = p.getNombreProducto();
@@ -99,12 +99,9 @@ public class HomePageServlet extends HttpServlet {
             listaParaVista.add(new AlquilerDetalleDTO(a, nombre, tipo));
         }
 
-// Pasar datos limpios al JSP
-        request.setAttribute("alquileresDetalle", listaParaVista);
-
         // Pasar datos al JSP
         request.setAttribute("novedades", novedades);
-        request.setAttribute("alquileres", misAlquileres);
+        request.setAttribute("alquileres", listaParaVista);
 
         // Reenviar a la vista (JSP)
         request.getRequestDispatcher("customerHomePage.jsp").forward(request, response);

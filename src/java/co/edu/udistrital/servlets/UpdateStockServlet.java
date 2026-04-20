@@ -2,7 +2,6 @@ package co.edu.udistrital.servlets;
 
 import co.edu.udistrital.model.repository.JuegoRepository;
 import co.edu.udistrital.model.repository.PeliculaRepository;
-import co.edu.udistrital.model.service.ActualizarStock;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -44,18 +43,25 @@ public class UpdateStockServlet extends HttpServlet {
             PeliculaRepository pe = (PeliculaRepository) getServletContext().getAttribute("peliculaRepository");
 
             // 2. Inicialización del Servicio local para Thread-Safety
-            ActualizarStock service = new ActualizarStock(jg, pe);
-
             // 3. Captura de parámetros
             String idProducto = request.getParameter("idProducto");
             String action = request.getParameter("action"); // "add" o "reduce"
+            boolean sumar = "add".equals(action);
 
             // 4. Ejecución de la lógica
-            if (idProducto != null && action != null) {
-                boolean sumar = "add".equals(action);
-                service.modificarUnidad(idProducto, sumar);
+            if (idProducto.startsWith("Jg")) {
+                if (sumar) {
+                    jg.increaseStock(idProducto);
+                } else {
+                    jg.decreaseStock(idProducto);
+                }
+            } else if (idProducto.startsWith("Pl")) {
+                if (sumar) {
+                    pe.increaseStock(idProducto);
+                } else {
+                    pe.decreaseStock(idProducto);
+                }
             }
-
             // 5. Redirección al panel de inventario
             response.sendRedirect("stock.jsp");
         }

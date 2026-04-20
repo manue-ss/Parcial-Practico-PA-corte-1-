@@ -26,7 +26,8 @@ public class DeleteClientServlet extends HttpServlet {
 
             String idCliente = request.getParameter("id");
             if (idCliente != null && !idCliente.trim().isEmpty()) {
-                repository.eliminar(idCliente);
+                System.out.println("Se entro a eliminar la cuenta");
+                repository.remove(idCliente);
             }
 
             response.sendRedirect("clients.jsp");

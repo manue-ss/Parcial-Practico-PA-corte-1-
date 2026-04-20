@@ -49,16 +49,17 @@ public class UpdateProfileServlet extends HttpServlet {
             GestionCuentaCliente service = new GestionCuentaCliente(repository);
 
             // 3. Captura de parámetros del formulario
-            Cliente clienteActual = (Cliente) session.getAttribute("usuarioLogueado");
+            Cliente cliente = (Cliente) session.getAttribute("usuarioLogueado");
             String nombre = request.getParameter("nombreCompleto");
             String correo = request.getParameter("correo");
             String telefono = request.getParameter("telefono");
 
-            // 4. Ejecución de la lógica de negocio
-            // Pasamos null en la contraseña para indicar que no se desea cambiar en este flujo
-            if (service.actualizarDatos(clienteActual.getId(), nombre, telefono, correo, null)) {
-                // Sincronizamos el objeto de sesión con los nuevos datos del repositorio
-                session.setAttribute("usuarioLogueado", repository.obtenerPorId(clienteActual.getId()));
+            cliente.setNombreCompleto(nombre);
+            cliente.setCorreo(correo);
+            cliente.setTelefono(telefono);
+
+            if(repository.update(cliente)){
+                System.out.println("Efectivamente actualizados");
             }
 
             // 5. Redirección al perfil para visualizar los cambios
