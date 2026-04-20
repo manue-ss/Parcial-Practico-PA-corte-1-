@@ -27,7 +27,7 @@ public class IniciarSesionEmpleado {
      * @return El objeto Empleado en sesión si las credenciales son válidas, null en caso contrario.
      */
     public Empleado autenticar(String username, String contraseniaTextoPlano) {
-        Empleado emp = repositorio.obtenerPorUsername(username);
+        Empleado emp = repositorio.getByUsername(username);
         
         if (emp != null) {
             String hashCalculado = SecurityUtil.encriptarSHA256(contraseniaTextoPlano);

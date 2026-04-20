@@ -62,6 +62,7 @@ public class AlquilerRepository extends BareRepository<Alquiler> {
                 psPr.executeUpdate();
             }
 
+            System.out.println("Se hizo el alquiler");
             con.commit();
             return true;
 
@@ -92,7 +93,7 @@ public class AlquilerRepository extends BareRepository<Alquiler> {
 
         String idStr = "Al" + String.format("%05d", idInt);
         String idClienteStr = "Cl" + String.format("%05d", idClienteInt);
-        String idProductoStr = "Pr" + String.format("%05d", idProductoInt);
+        String idProductoStr = idFormat(idProductoInt);
         LocalDate fechaAlquiler = fechaAlquilerSql.toLocalDate();
         LocalDate fechaEntrega = fechaPactadaSql.toLocalDate();
         double costo = rs.getDouble("costo");
@@ -306,4 +307,40 @@ public class AlquilerRepository extends BareRepository<Alquiler> {
     }
 
     /*--------------->>Otros<<---------------*/
+    
+    private String idFormat(int id) {
+    // 1. Primero verificamos si existe en la tabla de Juegos
+    String sqlJuegos = "SELECT COUNT(*) FROM juegos WHERE id_producto = ?";
+    // 2. Si no, verificamos en la tabla de Películas
+    String sqlPeliculas = "SELECT COUNT(*) FROM peliculas WHERE id_producto = ?";
+
+    try (Connection con = DriverManager.getConnection(Config.URL, Config.USER, Config.PASS)) {
+        
+        // --- Intento con Juegos ---
+        try (PreparedStatement psJ = con.prepareStatement(sqlJuegos)) {
+            psJ.setInt(1, id);
+            try (ResultSet rs = psJ.executeQuery()) {
+                if (rs.next() && rs.getInt(1) > 0) {
+                    return "Jg" + String.format("%05d", id);
+                }
+            }
+        }
+
+        // --- Intento con Películas ---
+        try (PreparedStatement psP = con.prepareStatement(sqlPeliculas)) {
+            psP.setInt(1, id);
+            try (ResultSet rs = psP.executeQuery()) {
+                if (rs.next() && rs.getInt(1) > 0) {
+                    return "Pl" + String.format("%05d", id);
+                }
+            }
+        }
+
+    } catch (SQLException e) {
+        System.err.println("Error al identificar prefijo del producto: " + e.getMessage());
+    }
+
+    // 3. Retorno de seguridad: Si no lo encuentra en ninguna, usamos un prefijo genérico
+    return "Pr" + String.format("%05d", id);
+}
 }

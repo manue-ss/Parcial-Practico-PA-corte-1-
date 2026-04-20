@@ -263,15 +263,16 @@ public class ClienteRepository extends BareRepository<Cliente>{
      * Elimina una cuenta de usuario. La integridad referencial (CASCADE) debe
      * encargarse de eliminar el registro asociado en la tabla clientes.
      *
-     * @param nombreUsuario Username del cliente a dar de baja.
+     * @param id Id del cliente a dar de baja.
      * @return {@code true} si el usuario fue eliminado.
      */
-    public boolean remove(String nombreUsuario) {
-        String sql = "DELETE FROM cuentas WHERE username = ?";
+    public boolean remove(String id) {
+        int idNumerica = Integer.parseInt(id.replaceAll("[^0-9]", ""));
+        String sql = "DELETE FROM cuentas WHERE id = ?";
 
         try (Connection con = DriverManager.getConnection(Config.URL, Config.USER, Config.PASS); PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.setString(1, nombreUsuario);
+            ps.setInt(1, idNumerica);
 
             int filasAfectadas = ps.executeUpdate();
 
