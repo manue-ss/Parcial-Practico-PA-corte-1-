@@ -4,6 +4,7 @@ import co.edu.udistrital.model.dto.ClienteDTO;
 import co.edu.udistrital.model.entities.Cliente;
 import co.edu.udistrital.model.repository.ClienteRepository;
 import co.edu.udistrital.model.service.IniciarSesion;
+import co.edu.udistrital.util.ClienteMapper;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -36,26 +37,62 @@ public class LoginServlet extends HttpServlet {
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
 
-        // 1. OBTENER REPOSITORIOS (Verifica que no sean null en consola)
+        // 1. Captura y Limpieza de datos (Evita espacios accidentales)
+        String user = request.getParameter("username");
+        String pass = request.getParameter("password");
+
+        // 2. Validación temprana (Fail-Fast)
+        if (user == null || user.trim().isEmpty() || pass == null || pass.trim().isEmpty()) {
+            enviarError(request, response, "Debes completar todos los campos");
+            return;
+        }
+
+        // 3. Obtención de dependencias (Idealmente el servicio ya debería estar en el Contexto)
         ClienteRepository cr = (ClienteRepository) getServletContext().getAttribute("clienteRepository");
 
+        // Si cr es null, es un error de configuración del servidor
+        if (cr == null) {
+            log("ERROR: ClienteRepository no inicializado en el Contexto");
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error de configuración del sistema");
+            return;
+        }
+
+        // 4. Lógica de Negocio
         ClienteDTO loginDto = new ClienteDTO();
-        loginDto.setNombreUsuario(request.getParameter("username"));
-        loginDto.setContrasenia(request.getParameter("password"));
+        loginDto.setNombreUsuario(user.trim());
+        loginDto.setContrasenia(pass);
 
-        IniciarSesion iniciarSesion = new IniciarSesion(cr);
-        Cliente clienteAutenticado = iniciarSesion.ejecutar(loginDto);
+        IniciarSesion service = new IniciarSesion(cr);
+        Cliente cliente = service.ejecutar(loginDto);
 
-        if (clienteAutenticado != null) {
-            HttpSession session = request.getSession();
-            session.setAttribute("usuarioLogueado", clienteAutenticado);
+        // 5. Manejo de Respuesta
+        if (cliente != null) {
+            // SEGURIDAD: Invalidar sesión anterior y crear una nueva
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                session.invalidate();
+            }
+            session = request.getSession(true);
 
+            // Convertir a DTO (Asegúrate que el mapper no pase la password al DTO de sesión)
+            ClienteDTO sessionDto = ClienteMapper.toDTO(cliente);
+            sessionDto.setContrasenia(null); // Limpieza por seguridad
+
+            session.setAttribute("usuarioLogueado", sessionDto);
             response.sendRedirect("HomePageServlet");
 
         } else {
-            request.setAttribute("errorLoginMessage", "Usuario o contraseña incorrectos");
-            request.getRequestDispatcher("index.jsp").forward(request, response);
+            enviarError(request, response, "Usuario o contraseña incorrectos");
         }
+    }
+
+    /**
+     * Método auxiliar para centralizar el envío de errores al index
+     */
+    private void enviarError(HttpServletRequest request, HttpServletResponse response, String mensaje)
+            throws ServletException, IOException {
+        request.setAttribute("errorLoginMessage", mensaje);
+        request.getRequestDispatcher("index.jsp").forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

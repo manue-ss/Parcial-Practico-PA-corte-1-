@@ -32,16 +32,14 @@ public class IniciarSesion {
             cliente = repositorio.getByUsername(identificador);
         }
 
-        if (cliente == null) {
-            return null;
+        if (cliente != null) {
+
+            String passHasheada = SecurityUtil.SHA256(dto.getContrasenia());
+
+            if (cliente.getContrasenia().equals(passHasheada)) {
+                return cliente;
+            }
         }
-
-        String passHasheada = SecurityUtil.encriptarSHA256(dto.getContrasenia());
-
-        if (cliente.getContrasenia().equals(passHasheada)) {
-            return cliente;
-        }
-
         return null;
     }
 }

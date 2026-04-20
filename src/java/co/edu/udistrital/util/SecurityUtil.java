@@ -16,7 +16,7 @@ public class SecurityUtil {
      * @param texto El texto plano a procesar.
      * @return El hash en formato hexadecimal (64 caracteres).
      */
-    public static String encriptarSHA256(String texto) {
+    public static String SHA256(String texto) {
         try {
             // 1. Obtener la instancia del algoritmo SHA-256
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
