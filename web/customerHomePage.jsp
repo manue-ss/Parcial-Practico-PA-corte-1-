@@ -120,12 +120,12 @@
                                 </div>
 
                                 <%
-                                    List<Alquiler> alquileres = (List<Alquiler>) request.getAttribute("alquileres");
+                                    List<AlquilerDetalleDTO> alquileres = (List<AlquilerDetalleDTO>) request.getAttribute("alquileres");
 
                                     boolean yaAlquilado = false;
                                     if (alquileres != null) {
-                                        for (Alquiler alc : alquileres) {
-                                            if (alc.getIdProducto().equals(p.getId())) {
+                                        for (AlquilerDetalleDTO alc : alquileres) {
+                                            if (alc.getAlquiler().getIdProducto().equals(p.getId())) {
                                                 yaAlquilado = true;
                                                 break;
                                             }
@@ -193,7 +193,7 @@
                                         count++;
                                     } // Cierre For Alquileres
                                 } // Cierre Else Alquileres
-                            %>
+%>
                         </div>
                     </section>
                 </div>  
