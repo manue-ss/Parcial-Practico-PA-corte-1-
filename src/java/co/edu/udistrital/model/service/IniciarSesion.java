@@ -4,6 +4,7 @@ import co.edu.udistrital.model.dto.ClienteDTO;
 import co.edu.udistrital.model.entities.Cliente;
 import co.edu.udistrital.model.repository.ClienteRepository;
 import co.edu.udistrital.util.SecurityUtil;
+import co.edu.udistrital.util.exceptions.LoginException;
 
 /**
  *
@@ -23,6 +24,12 @@ public class IniciarSesion {
     }
 
     public Cliente ejecutar(ClienteDTO dto) {
+
+        if (dto.getNombreUsuario() == null || dto.getNombreUsuario().isBlank()
+                || dto.getContrasenia() == null || dto.getContrasenia().isBlank()) {
+            throw new LoginException("Debes completar todos los campos.");
+        }
+
         Cliente cliente;
         String identificador = dto.getNombreUsuario();
 
@@ -32,14 +39,11 @@ public class IniciarSesion {
             cliente = repositorio.getByUsername(identificador);
         }
 
-        if (cliente != null) {
-
-            String passHasheada = SecurityUtil.SHA256(dto.getContrasenia());
-
-            if (cliente.getContrasenia().equals(passHasheada)) {
-                return cliente;
-            }
+        String passHasheada = SecurityUtil.SHA256(dto.getContrasenia());
+        if (cliente != null || !cliente.getContrasenia().equals(passHasheada)) {
+            throw new LoginException("Usuario o contraseña incorrectos.");
         }
-        return null;
+
+        return cliente;
     }
 }
