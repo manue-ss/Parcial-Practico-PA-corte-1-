@@ -180,7 +180,7 @@ public class Alquiler {
      * @return {@code true} si el alquiler es estado; {@code false} si ha
      * finalizado.
      */
-    public String isEstado() {
+    public String getEstado() {
         return estado;
     }
 
