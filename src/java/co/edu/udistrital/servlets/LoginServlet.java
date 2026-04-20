@@ -66,7 +66,7 @@ public class LoginServlet extends HttpServlet {
             sessionDto.setContrasenia(null);
             session.setAttribute("usuarioLogueado", sessionDto);
             response.sendRedirect("HomePageServlet");
-
+            return;
         } catch (LoginException e) {
             mensaje = e.getMessage();
 
