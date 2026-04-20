@@ -90,4 +90,31 @@ public class CatalogoService {
         }
         return listaDto;
     }
+
+    public List<AlquilerDTO> getAlquileresVigentes(String clienteId) {
+        List<Alquiler> todos = ar.getByCustomer(clienteId);
+        List<AlquilerDTO> vigentesDto = new ArrayList<>();
+
+        for (Alquiler a : todos) {
+            AlquilerDTO dto = AlquilerMapper.toDTO(a);
+
+            // Lógica de títulos y detalles centralizada
+            if (a.getIdProducto().startsWith("Jg")) {
+                Juego j = jr.getById(a.getIdProducto());
+                if (j != null) {
+                    dto.setNombreProducto(j.getNombreProducto());
+                    dto.setTipoProducto(j.getPlataforma() + " · " + j.getGenero());
+                }
+            } else {
+                Pelicula p = pr.getById(a.getIdProducto());
+                if (p != null) {
+                    dto.setNombreProducto(p.getNombreProducto());
+                    dto.setTipoProducto(p.getFormato() + " · " + p.getDuracion());
+                }
+            }
+            vigentesDto.add(dto);
+
+        }
+        return vigentesDto;
+    }
 }

@@ -1,6 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List" %>
-<%@ page import="co.edu.udistrital.model.entities.*" %>
+<%@ page import="co.edu.udistrital.model.dto.*" %>
 <%@ page import="co.edu.udistrital.model.repository.*" %>
 <!doctype html>
 <html lang="es">
@@ -45,7 +45,7 @@
                             </a>
                         </li>
                         <li class="menu-item active menu-item-static">
-                            <a href="rentals.jsp" class="menu-link">
+                            <a href="RentalServlet" class="menu-link">
                                 <i class="bx bx-movie-play"></i>
                                 <span>Alquileres</span>
                             </a>
@@ -90,65 +90,31 @@
                         </header>
                         <div class="product-list">
                             <%
-                                Cliente c = (Cliente) session.getAttribute("usuarioLogueado");
-                                if (c != null) {
-                                    AlquilerRepository ar = new AlquilerRepository();
-                                    JuegoRepository jr = new JuegoRepository();
-                                    PeliculaRepository pr = new PeliculaRepository();
-                                    List<Alquiler> misAlquileres = ar.getByCustomer(c.getId());
-
-                                    boolean tieneVigentes = false;
-                                    for (Alquiler a : misAlquileres) {
-                                        if (!a.isEstado().equalsIgnoreCase("DEVUELTO")) {
-                                            tieneVigentes = true;
-                                        }
-                                    }
-
-                                    if (!tieneVigentes) {
+                                List<AlquilerDTO> vigentes = (List<AlquilerDTO>) request.getAttribute("alquileresVigentes");
+                                if (vigentes == null || vigentes.isEmpty()) {
                             %>
                             <p>No tienes productos alquilados actualmente.</p>
-                            <%      } else {
-                                for (Alquiler a : misAlquileres) {
-                                    if (a.isEstado().equalsIgnoreCase("DEVUELTO")) {
-                                        continue;
-                                    }
-                                    String titulo = "Producto Desconocido";
-                                    String detalles = "";
-                                    if (a.getIdProducto().startsWith("Jg")) {
-                                        Juego j = jr.getById(a.getIdProducto());
-                                        if (j != null) {
-                                            titulo = j.getNombreProducto();
-                                            detalles = j.getPlataforma() + " · " + j.getGenero();
-                                        }
-                                    } else {
-                                        Pelicula p = pr.getById(a.getIdProducto());
-                                        if (p != null) {
-                                            titulo = p.getNombreProducto();
-                                            detalles = p.getFormato() + " · " + p.getDuracion();
-                                        }
-                                    }
-                            %>
+                            <% } else {
+                                for (AlquilerDTO a : vigentes) {%>
                             <article class="product-card">
                                 <div class="product-card-presentation">
-                                    <span><%= detalles%></span>
-                                    <h3 class="product-card-title"><%= titulo%></h3>
+                                    <span><%= a.getTipoProducto()%></span>
+                                    <h3 class="product-card-title"><%= a.getNombreProducto()%></h3>
                                 </div>
                                 <div class="product-card-details">
                                     <span>Inicio: <%= a.getFechaAlquiler()%></span>
                                     <span>Retorno: <%= a.getFechaPactada()%></span>
-                                    <span>Total cancelado: $<%= String.format("%.2f", a.getCostoTotal())%></span>
+                                    <span>Total: $<%= String.format("%.2f", a.getCostoTotal())%></span>
                                 </div>
-                                <form action="ReturnRentalServlet" method="POST" class="form-contents">
+                                <form action="ReturnRentalServlet" method="POST">
                                     <input type="hidden" name="idAlquiler" value="<%= a.getIdAlquiler()%>">
-                                    <button type="submit" class="product-card-btn danger" title="Devolver Producto">
+                                    <button type="submit" class="product-card-btn danger">
                                         <i class='bx bx-x'></i>
                                     </button>
                                 </form>
                             </article>
-                            <%          }
-                                    }
-                                }
-                            %>
+                            <% }
+                                }%>
                         </div>
                     </section>
                 </div>
