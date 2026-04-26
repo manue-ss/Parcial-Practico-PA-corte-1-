@@ -51,7 +51,7 @@ public class IniciarSesion {
         }
 
         String passHasheada = SecurityUtil.SHA256(dto.getContrasenia());
-        if (cliente == null || !cliente.getContrasenia().equals(passHasheada)) {
+        if (!cliente.validarContrasenia(passHasheada)) {
 
             throw new LoginException("Usuario o contraseña incorrectos.");
         }

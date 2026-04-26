@@ -86,8 +86,12 @@ public abstract class Cuenta {
      *
      * @return El hash de la contraseña.
      */
-    public String getContrasenia() {
-        return contrasenia;
+    public boolean validarContrasenia(String contraseniaIngresada) {
+        return contrasenia.equals(contraseniaIngresada);
+    }
+    
+    public String getContraseniaHash() {
+        return this.contrasenia;
     }
 
     /**
