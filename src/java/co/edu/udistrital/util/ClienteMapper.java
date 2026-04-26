@@ -42,7 +42,6 @@ public class ClienteMapper {
         String membresia = cliente.getMembresia().toString();
         clienteDTO.setMembresiaSeleccionada(membresia);
         clienteDTO.setFechaPagoMembresia(cliente.getFechaPagoMembresia());
-        clienteDTO.setContrasenia(cliente.getContrasenia());
 
         return clienteDTO;
     }
