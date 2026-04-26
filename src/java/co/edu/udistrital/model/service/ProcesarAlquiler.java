@@ -16,10 +16,10 @@ import java.time.temporal.ChronoUnit;
  */
 public class ProcesarAlquiler {
 
-    private AlquilerRepository alquilerRepo;
-    private ClienteRepository clienteRepo;
-    private JuegoRepository juegoRepo;
-    private PeliculaRepository peliRepo;
+    private final AlquilerRepository alquilerRepo;
+    private final ClienteRepository clienteRepo;
+    private final JuegoRepository juegoRepo;
+    private final PeliculaRepository peliRepo;
 
     /**
      * Construye el inyector de dependencias necesarias para los alquileres.

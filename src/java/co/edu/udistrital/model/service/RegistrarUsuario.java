@@ -17,7 +17,7 @@ import co.edu.udistrital.util.exceptions.SignupException;
  */
 public class RegistrarUsuario {
 
-    private ClienteRepository repositorio;
+    private final ClienteRepository repositorio;
 
     /**
      * Constructor que recibe el repositorio inyectado.
