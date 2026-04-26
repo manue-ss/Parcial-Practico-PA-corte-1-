@@ -18,7 +18,7 @@ import java.util.List;
  *
  * @author Manuel Salazar
  */
-public class ClienteRepository extends BareRepository<Cliente>{
+public class ClienteRepository extends BareRepository<Cliente> {
 
     public ClienteRepository() {
     }
@@ -45,7 +45,7 @@ public class ClienteRepository extends BareRepository<Cliente>{
                         Statement.RETURN_GENERATED_KEYS)) {
                     psC.setString(1, cliente.getNombreUsuario());
                     psC.setString(2, cliente.getNombreCompleto());
-                    psC.setString(3, cliente.getContrasenia());
+                    psC.setString(3, cliente.getContraseniaHash());
                     psC.setString(4, cliente.getCorreo());
                     psC.setString(5, cliente.getTelefono());
                     psC.executeUpdate();
@@ -225,7 +225,7 @@ public class ClienteRepository extends BareRepository<Cliente>{
      * @return {@code true} si la actualización fue completa.
      */
     public boolean update(Cliente cliente) {
-        String sqlCuenta = "UPDATE cuentas SET nombre = ?, contrasenia = ?, correo = ?, telefono = ? WHERE username = ?";
+        String sqlCuenta = "UPDATE cuentas SET nombre = ?, correo = ?, telefono = ? WHERE username = ?";
         String sqlCliente = "UPDATE clientes SET saldo = ?, membresia = ?, fecha_membresia = ? WHERE id_cuenta = ?";
 
         try (Connection con = DriverManager.getConnection(Config.URL, Config.USER, Config.PASS)) {
@@ -233,10 +233,9 @@ public class ClienteRepository extends BareRepository<Cliente>{
 
             try (PreparedStatement psCue = con.prepareStatement(sqlCuenta)) {
                 psCue.setString(1, cliente.getNombreCompleto());
-                psCue.setString(2, cliente.getContrasenia());
-                psCue.setString(3, cliente.getCorreo());
-                psCue.setString(4, cliente.getTelefono());
-                psCue.setString(5, cliente.getNombreUsuario());
+                psCue.setString(2, cliente.getCorreo());
+                psCue.setString(3, cliente.getTelefono());
+                psCue.setString(4, cliente.getNombreUsuario());
                 psCue.executeUpdate();
             }
 

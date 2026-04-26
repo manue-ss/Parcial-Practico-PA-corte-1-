@@ -145,7 +145,7 @@ public class Migrator_unused {
                     try (PreparedStatement psC = con.prepareStatement(sqlCuenta, Statement.RETURN_GENERATED_KEYS)) {
                         psC.setString(1, c.getNombreUsuario());
                         psC.setString(2, c.getNombreCompleto());
-                        psC.setString(3, c.getContrasenia());
+                        //psC.setString(3, c.validarContrasenia());
                         psC.setString(4, c.getCorreo());
                         psC.setString(5, c.getTelefono());
                         psC.executeUpdate();
@@ -192,7 +192,7 @@ public class Migrator_unused {
                     try (PreparedStatement psC = con.prepareStatement(sqlCuenta, Statement.RETURN_GENERATED_KEYS)) {
                         psC.setString(1, e.getNombreUsuario());
                         psC.setString(2, e.getNombreCompleto());
-                        psC.setString(3, e.getContrasenia());
+                        //psC.setString(3, e.validarContrasenia());
                         psC.setString(4, e.getCorreo());
                         psC.setString(5, e.getTelefono());
                         psC.executeUpdate();
