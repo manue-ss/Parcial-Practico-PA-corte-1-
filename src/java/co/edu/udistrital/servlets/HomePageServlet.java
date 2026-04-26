@@ -21,8 +21,12 @@ import jakarta.servlet.http.HttpSession;
 import java.util.List;
 
 /**
+ * Controlador principal del Dashboard o portal de Cliente.
+ * Recopila y consolida productos novedosos y alquileres detallados del cliente 
+ * actual para renderizarlos en la vista principal (customerHomePage.jsp).
  *
- * @author Acer-Pc
+ * @author Manuel Salazar
+ * @since 0.2
  */
 @WebServlet(name = "HomePageServlet", urlPatterns = {"/HomePageServlet"})
 public class HomePageServlet extends HttpServlet {

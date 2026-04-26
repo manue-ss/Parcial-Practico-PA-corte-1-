@@ -1,11 +1,15 @@
 package co.edu.udistrital.util.exceptions;
 
 /**
- * Excepción para errores de lógica de negocio (validaciones).
+ * Excepción para errores de lógica de negocio (validaciones) relacionados
+ * al subsistema de Alquileres.
+ *
+ * @author Manuel Salazar
+ * @since 0.2
  */
-public class LoginException extends RuntimeException {
+public class AlquilerException extends RuntimeException {
     
-    public LoginException(String mensaje) {
+    public AlquilerException(String mensaje) {
         super(mensaje);
     }
 }

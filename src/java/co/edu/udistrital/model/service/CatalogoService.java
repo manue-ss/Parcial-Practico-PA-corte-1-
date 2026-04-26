@@ -18,8 +18,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Servicio encargado de la logística del Catálogo y la consolidación de Alquileres.
+ * Aplica lógica de negocio para obtener "Novedades" mixtas entre películas
+ * y juegos, y cruza datos entre los dominios de Alquileres y Productos.
  *
- * @author Acer-Pc
+ * @author Manuel Salazar
+ * @since 0.2
  */
 public class CatalogoService {
 
@@ -27,12 +31,27 @@ public class CatalogoService {
     private final PeliculaRepository pr;
     private final AlquilerRepository ar;
 
+    /**
+     * Construye un CatalogoService con inyección de dependencias.
+     *
+     * @param jr Dependencia repositorio de Juegos.
+     * @param pr Dependencia repositorio de Películas.
+     * @param ar Dependencia repositorio de Alquileres.
+     */
     public CatalogoService(JuegoRepository jr, PeliculaRepository pr, AlquilerRepository ar) {
         this.jr = jr;
         this.pr = pr;
         this.ar = ar;
     }
 
+    /**
+     * Construye una lista integrada de DTOs con las últimas novedades del sistema,
+     * obteniendo progresivamente una película y un juego para proveer variedad visual
+     * a las vitrinas front-end (Store).
+     *
+     * @param max Límite de ítems que pueden ser retornados combinando ambos.
+     * @return Una lista de {@link ProductoDTO} listos para iterar el JSP.
+     */
     public List<ProductoDTO> getNovedades(int max) {
 
         List<Juego> listaJuegos = jr.getAll().reversed();
@@ -69,6 +88,13 @@ public class CatalogoService {
         return novedades;
     }
 
+    /**
+     * Obtiene el registro completo de alquileres de un cliente determinado, 
+     * integrando manualmente la información del producto asociado a ese alquiler.
+     *
+     * @param clienteId El string identificador del cliente en concreto.
+     * @return Lista de Alquileres transformados a DTO.
+     */
     public List<AlquilerDTO> getAlquileresDetallados(String clienteId) {
         List<Alquiler> misAlquileres = ar.getByCustomer(clienteId);
         List<AlquilerDTO> listaDto = new ArrayList<>();
@@ -91,6 +117,13 @@ public class CatalogoService {
         return listaDto;
     }
 
+    /**
+     * Recupera un listado en formato resumido que concentra los alquileres 
+     * en estado 'ACTIVO' o no resueltos por el cliente.
+     *
+     * @param clienteId Identificador de cuenta de dicho cliente.
+     * @return Listado de AlquilerDTO simplificado con el string conformado ("Plataforma · Género/Duración")
+     */
     public List<AlquilerDTO> getAlquileresVigentes(String clienteId) {
         List<Alquiler> todos = ar.getByCustomer(clienteId);
         List<AlquilerDTO> vigentesDto = new ArrayList<>();

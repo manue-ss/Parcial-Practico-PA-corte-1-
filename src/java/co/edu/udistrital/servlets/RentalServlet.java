@@ -20,8 +20,12 @@ import jakarta.servlet.http.HttpSession;
 import java.util.List;
 
 /**
+ * Controlador de vista para el apartado de "Mis Alquileres".
+ * Consulta el catálogo general para traer solo los alquileres no resueltos
+ * del cliente actual y los despacha hacia la vista (rentals.jsp).
  *
- * @author Acer-Pc
+ * @author Manuel Salazar
+ * @since 0.2
  */
 @WebServlet(name = "RentalServlet", urlPatterns = {"/RentalServlet"})
 public class RentalServlet extends HttpServlet {

@@ -12,8 +12,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
+ * Controlador enfocado en el flujo de registro (Signup).
+ * Orquesta la transformación de formulario a DTO y lo envía a la lógica 
+ * de negocio para inserción (RegistrarUsuario).
  *
- * @author Acer-Pc
+ * @author Manuel Salazar
+ * @since 0.2
  */
 @WebServlet(name = "SignupServlet", urlPatterns = {"/SignupServlet"})
 public class SignupServlet extends HttpServlet {

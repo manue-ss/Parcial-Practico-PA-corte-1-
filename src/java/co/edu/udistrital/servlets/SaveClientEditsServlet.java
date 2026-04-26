@@ -9,6 +9,13 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+/**
+ * Controlador administrativo que procesa los cambios efectuados al perfíl
+ * de un usuario existente desde el menú de Staff.
+ *
+ * @author Manuel Salazar
+ * @since 0.2
+ */
 @WebServlet(name = "SaveClientEditsServlet", urlPatterns = {"/SaveClientEditsServlet"})
 public class SaveClientEditsServlet extends HttpServlet {
 

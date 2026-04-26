@@ -1,8 +1,10 @@
 package co.edu.udistrital.servlets;
 
+import co.edu.udistrital.model.dto.ClienteDTO;
 import co.edu.udistrital.model.entities.Cliente;
 import co.edu.udistrital.model.repository.ClienteRepository;
 import co.edu.udistrital.model.service.GestionCuentaCliente;
+import co.edu.udistrital.util.ClienteMapper;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,10 +15,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 /**
- * Endpoint para recargar fondos localmente a la cuenta de usuario. Sigue la
- * estructura estandarizada con processRequest.
+ * Endpoint para recargar fondos localmente a la cuenta de usuario. Delega 
+ * al Caso de Uso la inserción de saldo simulando una pasarela de pago.
  *
  * @author Manuel Salazar
+ * @since 0.2
  */
 @WebServlet(name = "RechargeBalanceServlet", urlPatterns = {"/RechargeBalanceServlet"})
 public class RechargeBalanceServlet extends HttpServlet {
@@ -28,38 +31,44 @@ public class RechargeBalanceServlet extends HttpServlet {
             throws ServletException, IOException {
 
         request.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html;charset=UTF-8");
+        HttpSession session = request.getSession(false);
 
-        try (PrintWriter out = response.getWriter()) {
-            // 1. Verificar sesión
-            HttpSession session = request.getSession(false);
-            if (session == null || session.getAttribute("usuarioLogueado") == null) {
-                response.sendRedirect("index.jsp");
-                return;
+        if (session == null || session.getAttribute("usuarioLogueado") == null) {
+            response.sendRedirect("index.jsp?error=Sesion expirada");
+            return;
+        }
+
+        ClienteRepository repositorio = (ClienteRepository) getServletContext().getAttribute("clienteRepository");
+        GestionCuentaCliente service = new GestionCuentaCliente(repositorio);
+
+        ClienteDTO clienteSession = (ClienteDTO) session.getAttribute("usuarioLogueado");
+
+        try {
+            String montoStr = request.getParameter("monto");
+            if (montoStr == null || montoStr.isBlank()) {
+                throw new NumberFormatException();
             }
 
-            // 2. Obtener dependencias y datos
-            ClienteRepository repositorio = (ClienteRepository) getServletContext().getAttribute("clienteRepository");
-            GestionCuentaCliente service = new GestionCuentaCliente(repositorio);
+            double monto = Double.parseDouble(montoStr);
 
-            Cliente cliente = (Cliente) session.getAttribute("usuarioLogueado");
+            if (service.recargarSaldo(clienteSession.getId(), monto)) {
+                Cliente clienteActualizado = repositorio.getById(clienteSession.getId());
 
-            try {
-                double monto = Double.parseDouble(request.getParameter("monto"));
-
-                // 3. Ejecutar lógica de negocio
-                if (service.recargarSaldo(cliente.getId(), monto)) {
-                    Cliente clienteActual = repositorio.getById(cliente.getId());
-                    session.setAttribute("usuarioLogueado", clienteActual);
-                }
-
-                response.sendRedirect("customerProfile.jsp");
-
-            } catch (NumberFormatException | NullPointerException e) {
-                // Manejo de error si el monto no es válido
-                request.setAttribute("errorMessage", "Monto de recarga inválido");
-                request.getRequestDispatcher("customerProfile.jsp").forward(request, response);
+                ClienteDTO dtoActualizado = ClienteMapper.toDTO(clienteActualizado);
+                dtoActualizado.setContrasenia(null);
+                session.setAttribute("usuarioLogueado", dtoActualizado);
             }
+
+            response.sendRedirect("customerProfile.jsp?success=Recarga exitosa");
+            return;
+
+        } catch (NumberFormatException e) {
+            request.setAttribute("errorMessage", "Por favor, ingresa un monto válido.");
+            request.getRequestDispatcher("customerProfile.jsp").forward(request, response);
+        } catch (Exception e) {
+            log("Error en recarga: ", e);
+            request.setAttribute("errorMessage", "Error técnico al procesar la recarga.");
+            request.getRequestDispatcher("customerProfile.jsp").forward(request, response);
         }
     }
 

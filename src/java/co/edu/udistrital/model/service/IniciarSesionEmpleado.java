@@ -30,7 +30,7 @@ public class IniciarSesionEmpleado {
         Empleado emp = repositorio.getByUsername(username);
         
         if (emp != null) {
-            String hashCalculado = SecurityUtil.encriptarSHA256(contraseniaTextoPlano);
+            String hashCalculado = SecurityUtil.SHA256(contraseniaTextoPlano);
             if (emp.getContrasenia().equals(hashCalculado)) {
                 return emp;
             }

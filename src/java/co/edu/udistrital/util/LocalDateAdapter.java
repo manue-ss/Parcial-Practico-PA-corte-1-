@@ -13,6 +13,9 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * Adaptador para serializar/deserializar LocalDate con GSON en formato ISO-8601 (YYYY-MM-DD).
+ *
+ * @author Manuel Salazar
+ * @since 0.2
  */
 public class LocalDateAdapter implements JsonSerializer<LocalDate>, JsonDeserializer<LocalDate> {
 

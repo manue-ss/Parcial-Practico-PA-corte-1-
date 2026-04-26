@@ -18,7 +18,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * productos de forma individual.
  *
  * @author Manuel Salazar
- * @since 0.1
+ * @since 0.2
  */
 @WebServlet(name = "UpdateStockServlet", urlPatterns = {"/UpdateStockServlet"})
 public class UpdateStockServlet extends HttpServlet {

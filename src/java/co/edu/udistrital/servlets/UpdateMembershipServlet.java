@@ -1,8 +1,10 @@
 package co.edu.udistrital.servlets;
 
+import co.edu.udistrital.model.dto.ClienteDTO;
 import co.edu.udistrital.model.entities.Cliente;
 import co.edu.udistrital.model.repository.ClienteRepository;
 import co.edu.udistrital.model.service.GestionCuentaCliente;
+import co.edu.udistrital.util.ClienteMapper;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -25,41 +27,40 @@ public class UpdateMembershipServlet extends HttpServlet {
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
 
-        // 1. Verificación de Seguridad (Sesión)
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("usuarioLogueado") == null) {
             response.sendRedirect("index.jsp");
             return;
         }
 
-        // 2. Obtención de Repositorio y Servicio
         ClienteRepository repo = (ClienteRepository) getServletContext().getAttribute("clienteRepository");
         GestionCuentaCliente service = new GestionCuentaCliente(repo);
 
-        // 3. Obtención de datos actuales y parámetros
-        Cliente clienteSesion = (Cliente) session.getAttribute("usuarioLogueado");
-        String username = clienteSesion.getNombreUsuario(); // Identificador coherente
+        ClienteDTO clienteSesion = (ClienteDTO) session.getAttribute("usuarioLogueado");
         String nuevaMembresia = request.getParameter("membresia");
 
-        // 4. Lógica de actualización basada en Username
         if (nuevaMembresia != null && !nuevaMembresia.isBlank()) {
 
-            // Asumiendo que ajustarás subirMembresia para recibir username o que el ID es el username
-            if (service.cambiarMembresia(username, nuevaMembresia)) {
+            if (service.cambiarMembresia(clienteSesion.getId(), nuevaMembresia)) {
 
-                // REFRESCO DE SESIÓN: Buscamos por el método lógico obtenerPorUsername
-                Cliente clienteActualizado = repo.getByUsername(username);
-                session.setAttribute("usuarioLogueado", clienteActualizado);
+                Cliente clienteActualizado = repo.getById(clienteSesion.getId());
+
+                ClienteDTO dtoRefrescado = ClienteMapper.toDTO(clienteActualizado);
+                dtoRefrescado.setContrasenia(null);
+
+                session.setAttribute("usuarioLogueado", dtoRefrescado);
+
+                response.sendRedirect("customerProfile.jsp?success=membership_updated");
+                return;
 
             } else {
-                // Caso de error: saldo insuficiente o fallo en persistencia
-                request.setAttribute("errorMembresia", "No se pudo actualizar la membresía. Verifique su saldo.");
+                // Manejo de error (Saldo insuficiente o error de enum)
+                request.setAttribute("errorMembresia", "No se pudo actualizar la membresía. Verifique que tenga saldo suficiente.");
                 request.getRequestDispatcher("customerProfile.jsp").forward(request, response);
                 return;
             }
         }
 
-        // 5. Redirección final exitosa
         response.sendRedirect("customerProfile.jsp");
     }
 
