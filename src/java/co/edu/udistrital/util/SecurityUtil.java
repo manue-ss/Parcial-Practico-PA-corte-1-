@@ -6,7 +6,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.HexFormat;
 
 /**
- * Utilidad para cifrados y herramientas de seguridad.
+ * Utilidad para cifrados y herramientas estáticas de seguridad como hashing.
+ *
+ * @author Manuel Salazar
+ * @since 0.1
  */
 public class SecurityUtil {
 

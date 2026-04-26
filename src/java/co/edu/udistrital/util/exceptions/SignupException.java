@@ -1,7 +1,10 @@
 package co.edu.udistrital.util.exceptions;
 
 /**
- * Excepción para errores de lógica de negocio (validaciones).
+ * Excepción para errores de captura de datos (validaciones) durante el registro.
+ *
+ * @author Manuel Salazar
+ * @since 0.1
  */
 public class SignupException extends RuntimeException {
     

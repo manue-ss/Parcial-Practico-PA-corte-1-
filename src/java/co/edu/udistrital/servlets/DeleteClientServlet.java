@@ -9,6 +9,14 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+/**
+ * Controlador encargado de la eliminación lógica o física de una cuenta de cliente.
+ * Intercepta la petición desde la vista administrativa y delega al repositorio
+ * respectivo la purga en base de datos.
+ *
+ * @author Manuel Salazar
+ * @since 0.2
+ */
 @WebServlet(name = "DeleteClientServlet", urlPatterns = {"/DeleteClientServlet"})
 public class DeleteClientServlet extends HttpServlet {
 

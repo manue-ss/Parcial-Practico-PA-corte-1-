@@ -7,6 +7,14 @@ import co.edu.udistrital.util.ClienteMapper;
 import co.edu.udistrital.util.SecurityUtil;
 import co.edu.udistrital.util.exceptions.SignupException;
 
+/**
+ * Servicio encargado de gestionar el flujo de registro de un Client nuevo en la DB.
+ * Aplica validaciones por campo a los nombres, contraseñas seguras y previene
+ * duplicidad de usuarios o cuentas vinculadas por email.
+ *
+ * @author Manuel Salazar
+ * @since 0.1
+ */
 public class RegistrarUsuario {
 
     private ClienteRepository repositorio;
@@ -14,12 +22,19 @@ public class RegistrarUsuario {
     /**
      * Constructor que recibe el repositorio inyectado.
      *
-     * @param repositorio El repositorio de clientes.
+     * @param repositorio El repositorio de clientes para inserción.
      */
     public RegistrarUsuario(ClienteRepository repositorio) {
         this.repositorio = repositorio;
     }
 
+    /**
+     * Arranca la validación en cadena del DTO y efectúa el intento de inserción.
+     *
+     * @param cliente El Data Transfer Object capturado del servlet Signup.
+     * @throws SignupException Si un dato transgrede el estándar o duplicidad.
+     * @throws RuntimeException Si cae un error general de conexión.
+     */
     public void ejecutar(ClienteDTO cliente) {
         validar(cliente);
 
