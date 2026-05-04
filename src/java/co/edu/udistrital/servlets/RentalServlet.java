@@ -1,27 +1,34 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
+ */
 package co.edu.udistrital.servlets;
 
+import co.edu.udistrital.model.dto.AlquilerDTO;
+import co.edu.udistrital.model.dto.ClienteDTO;
+import co.edu.udistrital.model.repository.AlquilerRepository;
 import co.edu.udistrital.model.repository.JuegoRepository;
 import co.edu.udistrital.model.repository.PeliculaRepository;
+import co.edu.udistrital.model.service.CatalogoService;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import java.util.List;
 
 /**
- * Despachador de peticiones para controlar adición/sustracción manual de stock
- * en el repositorio local.
- *
- * Este controlador permite a los administradores gestionar las existencias de
- * productos de forma individual.
+ * Controlador de vista para el apartado de "Mis Alquileres".
+ * Consulta el catálogo general para traer solo los alquileres no resueltos
+ * del cliente actual y los despacha hacia la vista (rentals.jsp).
  *
  * @author Manuel Salazar
  * @since 0.2
  */
-@WebServlet(name = "UpdateStockServlet", urlPatterns = {"/UpdateStockServlet"})
-public class UpdateStockServlet extends HttpServlet {
+@WebServlet(name = "RentalServlet", urlPatterns = {"/RentalServlet"})
+public class RentalServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -34,37 +41,29 @@ public class UpdateStockServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html;charset=UTF-8");
 
-        try (PrintWriter out = response.getWriter()) {
-            // 1. Obtención de Repositorios desde el Contexto (Consistencia de inventario)
-            JuegoRepository jg = (JuegoRepository) getServletContext().getAttribute("juegoRepository");
-            PeliculaRepository pe = (PeliculaRepository) getServletContext().getAttribute("peliculaRepository");
+        HttpSession session = request.getSession(false);
 
-            // 2. Inicialización del Servicio local para Thread-Safety
-            // 3. Captura de parámetros
-            String idProducto = request.getParameter("idProducto");
-            String action = request.getParameter("action"); // "add" o "reduce"
-            boolean sumar = "add".equals(action);
-
-            // 4. Ejecución de la lógica
-            if (idProducto.startsWith("Jg")) {
-                if (sumar) {
-                    jg.increaseStock(idProducto);
-                } else {
-                    jg.decreaseStock(idProducto);
-                }
-            } else if (idProducto.startsWith("Pl")) {
-                if (sumar) {
-                    pe.increaseStock(idProducto);
-                } else {
-                    pe.decreaseStock(idProducto);
-                }
-            }
-            // 5. Redirección al panel de inventario
-            response.sendRedirect("stock.jsp");
+        // 1. Verificación de sesión
+        if (session == null || session.getAttribute("usuarioLogueado") == null) {
+            response.sendRedirect("index.jsp?error=Sesion expirada");
+            return;
         }
+
+        // 2. Obtener dependencias del Contexto (Como lo hicimos en el Home)
+        JuegoRepository jr = (JuegoRepository) getServletContext().getAttribute("juegoRepository");
+        PeliculaRepository pr = (PeliculaRepository) getServletContext().getAttribute("peliculaRepository");
+        AlquilerRepository ar = (AlquilerRepository) getServletContext().getAttribute("alquilerRepository");
+
+        ClienteDTO cliente = (ClienteDTO) session.getAttribute("usuarioLogueado");
+        CatalogoService service = new CatalogoService(jr, pr, ar);
+
+        // 3. Obtener solo los alquileres que NO han sido devueltos
+        List<AlquilerDTO> vigentes = service.getAlquileresVigentes(cliente.getId());
+
+        // 4. Pasar a la vista
+        request.setAttribute("alquileresVigentes", vigentes);
+        request.getRequestDispatcher("rentals.jsp").forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -103,6 +102,7 @@ public class UpdateStockServlet extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "Manual Inventory Stock Update Controller";
+        return "Short description";
     }// </editor-fold>
+
 }

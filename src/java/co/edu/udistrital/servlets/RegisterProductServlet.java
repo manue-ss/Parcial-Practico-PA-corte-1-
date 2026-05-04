@@ -11,6 +11,14 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+/**
+ * Controlador enfocado en la catalogación de nuevos productos físicos o digitales.
+ * Dependiendo del tipo (Película o Juego), recolecta atributos específicos 
+ * de la petición y los despacha al repositorio correcto.
+ *
+ * @author Manuel Salazar
+ * @since 0.2
+ */
 @WebServlet(name = "RegisterProductServlet", urlPatterns = {"/RegisterProductServlet"})
 public class RegisterProductServlet extends HttpServlet {
 

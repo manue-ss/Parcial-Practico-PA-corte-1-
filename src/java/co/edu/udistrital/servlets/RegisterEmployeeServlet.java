@@ -11,6 +11,14 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+/**
+ * Controlador encargado del alta de nuevos empleados en el sistema.
+ * Genera un identificador único, encripta la contraseña y delega 
+ * al repositorio de empleados la inserción en la base de datos.
+ *
+ * @author Manuel Salazar
+ * @since 0.2
+ */
 @WebServlet(name = "RegisterEmployeeServlet", urlPatterns = {"/RegisterEmployeeServlet"})
 public class RegisterEmployeeServlet extends HttpServlet {
 
@@ -44,7 +52,7 @@ public class RegisterEmployeeServlet extends HttpServlet {
                     cargo,
                     generatedId,
                     nombreUsuario,
-                    SecurityUtil.encriptarSHA256(contrasenia),
+                    SecurityUtil.SHA256(contrasenia),
                     nombreCompleto,
                     correo,
                     telefono

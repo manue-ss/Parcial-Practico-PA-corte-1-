@@ -5,8 +5,8 @@ import co.edu.udistrital.model.repository.EmpleadoRepository;
 import co.edu.udistrital.util.SecurityUtil;
 
 /**
- * Caso de Uso que gestiona la verificación de credenciales de los
- * miembros del Staff (Administradores y Empleados comunes).
+ * Caso de Uso que gestiona la verificación de credenciales de los miembros del
+ * Staff (Administradores y Empleados comunes).
  *
  * @author Manuel Salazar
  * @since 0.1
@@ -24,14 +24,15 @@ public class IniciarSesionEmpleado {
      *
      * @param username ID de ingreso del trabajador
      * @param contraseniaTextoPlano Contraseña a validar
-     * @return El objeto Empleado en sesión si las credenciales son válidas, null en caso contrario.
+     * @return El objeto Empleado en sesión si las credenciales son válidas,
+     * null en caso contrario.
      */
-    public Empleado autenticar(String username, String contraseniaTextoPlano) {
+    public Empleado ejecutar(String username, String contraseniaTextoPlano) {
         Empleado emp = repositorio.getByUsername(username);
-        
+
         if (emp != null) {
-            String hashCalculado = SecurityUtil.encriptarSHA256(contraseniaTextoPlano);
-            if (emp.getContrasenia().equals(hashCalculado)) {
+            String hashCalculado = SecurityUtil.SHA256(contraseniaTextoPlano);
+            if (emp.validarContrasenia(hashCalculado)) {
                 return emp;
             }
         }

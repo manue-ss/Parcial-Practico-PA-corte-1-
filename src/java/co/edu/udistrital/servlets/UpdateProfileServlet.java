@@ -1,10 +1,11 @@
 package co.edu.udistrital.servlets;
 
+import co.edu.udistrital.model.dto.ClienteDTO;
 import co.edu.udistrital.model.entities.Cliente;
 import co.edu.udistrital.model.repository.ClienteRepository;
 import co.edu.udistrital.model.service.GestionCuentaCliente;
+import co.edu.udistrital.util.ClienteMapper;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -17,7 +18,7 @@ import jakarta.servlet.http.HttpSession;
  * cliente (nombre, correo, teléfono) y sincronizar la sesión activa.
  *
  * @author Manuel Salazar
- * @since 0.1
+ * @since 0.2
  */
 @WebServlet(name = "UpdateProfileServlet", urlPatterns = {"/UpdateProfileServlet"})
 public class UpdateProfileServlet extends HttpServlet {
@@ -33,37 +34,45 @@ public class UpdateProfileServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         request.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html;charset=UTF-8");
+        HttpSession session = request.getSession(false);
 
-        try (PrintWriter out = response.getWriter()) {
-            // 1. Verificación de sesión
-            HttpSession session = request.getSession(false);
-            if (session == null || session.getAttribute("usuarioLogueado") == null) {
-                response.sendRedirect("index.jsp");
-                return;
+        // 1. Verificación de seguridad
+        if (session == null || session.getAttribute("usuarioLogueado") == null) {
+            response.sendRedirect("index.jsp");
+            return;
+        }
+
+        ClienteRepository repository = (ClienteRepository) getServletContext().getAttribute("clienteRepository");
+        GestionCuentaCliente service = new GestionCuentaCliente(repository);
+
+        ClienteDTO clienteSession = (ClienteDTO) session.getAttribute("usuarioLogueado");
+
+        try {
+            ClienteDTO datosNuevos = new ClienteDTO();
+            datosNuevos.setId(clienteSession.getId());
+            datosNuevos.setNombreCompleto(request.getParameter("nombreCompleto"));
+            datosNuevos.setCorreo(request.getParameter("correo"));
+            datosNuevos.setTelefono(request.getParameter("telefono"));
+
+
+            if (service.actualizarDatos(datosNuevos)) {
+                Cliente actualizado = repository.getById(clienteSession.getId());
+
+                ClienteDTO dtoRefrescado = ClienteMapper.toDTO(actualizado);
+                dtoRefrescado.setContrasenia(null);
+
+                session.setAttribute("usuarioLogueado", dtoRefrescado);
+
+                response.sendRedirect("customerProfile.jsp?success=updated");
+            } else {
+                response.sendRedirect("customerProfile.jsp?error=update_failed");
             }
 
-            // 2. Obtención de dependencias desde el Contexto
-            ClienteRepository repository = (ClienteRepository) getServletContext().getAttribute("clienteRepository");
-            GestionCuentaCliente service = new GestionCuentaCliente(repository);
-
-            // 3. Captura de parámetros del formulario
-            Cliente cliente = (Cliente) session.getAttribute("usuarioLogueado");
-            String nombre = request.getParameter("nombreCompleto");
-            String correo = request.getParameter("correo");
-            String telefono = request.getParameter("telefono");
-
-            cliente.setNombreCompleto(nombre);
-            cliente.setCorreo(correo);
-            cliente.setTelefono(telefono);
-
-            if(repository.update(cliente)){
-                System.out.println("Efectivamente actualizados");
-            }
-
-            // 5. Redirección al perfil para visualizar los cambios
-            response.sendRedirect("customerProfile.jsp");
+        } catch (Exception e) {
+            log("Error actualizando perfil: ", e);
+            response.sendRedirect("customerProfile.jsp?error=internal_error");
         }
     }
 

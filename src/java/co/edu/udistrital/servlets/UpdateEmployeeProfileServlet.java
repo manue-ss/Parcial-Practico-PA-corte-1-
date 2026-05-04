@@ -11,6 +11,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
+/**
+ * Controlador que procesa las actualizaciones de datos de contacto o personales
+ * de un empleado específico y sobreescribe su historial actual.
+ *
+ * @author Manuel Salazar
+ * @since 0.2
+ */
 @WebServlet(name = "UpdateEmployeeProfileServlet", urlPatterns = {"/UpdateEmployeeProfileServlet"})
 public class UpdateEmployeeProfileServlet extends HttpServlet {
 

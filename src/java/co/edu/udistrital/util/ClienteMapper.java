@@ -5,8 +5,11 @@ import co.edu.udistrital.model.entities.Cliente;
 import co.edu.udistrital.model.enums.TipoMembresia;
 
 /**
+ * Utilidad de mapeo bidireccional entre la entidad persistente Cliente y el
+ * Objeto de Transferencia de Datos ClienteDTO.
  *
- * @author Acer-Pc
+ * @author Manuel Salazar
+ * @since 0.2
  */
 public class ClienteMapper {
 
@@ -39,7 +42,6 @@ public class ClienteMapper {
         String membresia = cliente.getMembresia().toString();
         clienteDTO.setMembresiaSeleccionada(membresia);
         clienteDTO.setFechaPagoMembresia(cliente.getFechaPagoMembresia());
-        clienteDTO.setContrasenia(cliente.getContrasenia());
 
         return clienteDTO;
     }

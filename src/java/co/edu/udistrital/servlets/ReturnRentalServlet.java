@@ -15,7 +15,7 @@ import jakarta.servlet.http.HttpSession;
  * transacción abierta y repone las unidades a tienda.
  *
  * @author Manuel Salazar
- * @since 0.1
+ * @since 0.2
  */
 @WebServlet(name = "ReturnRentalServlet", urlPatterns = {"/ReturnRentalServlet"})
 public class ReturnRentalServlet extends HttpServlet {

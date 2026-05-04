@@ -46,7 +46,7 @@
                             </a>
                         </li>
                         <li class="menu-item menu-item-static">
-                            <a href="rentals.jsp" class="menu-link">
+                            <a href="RentalServlet" class="menu-link">
                                 <i class="bx bx-movie-play"></i>
                                 <span>Alquileres</span>
                             </a>
@@ -91,41 +91,33 @@
                         </header>
                         <div class="product-list">
                             <%
-                                List<Producto> productoList = (List<Producto>) request.getAttribute("novedades");
+                                List<ProductoDTO> productoList = (List<ProductoDTO>) request.getAttribute("novedades");
                                 if (productoList == null || productoList.isEmpty()) {
                             %>
                             <p style="color: var(--color-text-secondary); padding: 1rem;">No hay productos disponibles.</p>
                             <%
                             } else {
-                                for (Producto p : productoList) {
-                                    String categoria = (p instanceof Juego) ? "Juego" : "Película";
-                                    String formato = "";
-                                    String detalleExtra = "";
-                                    if (p instanceof Juego) {
-                                        formato = ((Juego) p).getPlataforma();
-                                        detalleExtra = ((Juego) p).getGenero();
-                                    } else if (p instanceof Pelicula) {
-                                        formato = ((Pelicula) p).getFormato();
-                                        detalleExtra = ((Pelicula) p).getDuracion();
-                                    }
+                                for (ProductoDTO p : productoList) {
                             %>
                             <article class="product-card">
                                 <div class="product-card-presentation">
-                                    <span><%= (formato != null) ? formato : ""%> · <%= categoria%></span>
+                                    <span><%= (p.getPlataforma() != null) ? p.getPlataforma() : ""%>
+                                        · 
+                                        <%= p.getCategoria()%></span>
                                     <h3 class="product-card-title"><%= p.getNombreProducto()%></h3>
                                 </div>
                                 <div class="product-card-details">
-                                    <span><%= detalleExtra%></span>
+                                    <span><%= p.getDetalle()%></span>
                                     <span>Precio: $ <%= p.getCostoBase()%> / dia</span>
                                 </div>
 
                                 <%
-                                    List<AlquilerDetalleDTO> alquileres = (List<AlquilerDetalleDTO>) request.getAttribute("alquileres");
+                                    List<AlquilerDTO> alquileres = (List<AlquilerDTO>) request.getAttribute("alquileres");
 
                                     boolean yaAlquilado = false;
                                     if (alquileres != null) {
-                                        for (AlquilerDetalleDTO alc : alquileres) {
-                                            if (alc.getAlquiler().getIdProducto().equals(p.getId())) {
+                                        for (AlquilerDTO alc : alquileres) {
+                                            if (alc.getIdProducto().equals(p.getId())) {
                                                 yaAlquilado = true;
                                                 break;
                                             }
@@ -168,14 +160,14 @@
                         </header>
                         <div class="product-list">
                             <%
-                                List<AlquilerDetalleDTO> alquileres = (List<AlquilerDetalleDTO>) request.getAttribute("alquileres");
+                                List<AlquilerDTO> alquileres = (List<AlquilerDTO>) request.getAttribute("alquileres");
                                 if (alquileres == null || alquileres.isEmpty()) {
                             %>
                             <p style="color: var(--color-text-secondary); padding: 1rem;">No tienes alquileres vigentes.</p>
                             <%
                             } else {
                                 int count = 0;
-                                for (AlquilerDetalleDTO a : alquileres) {
+                                for (AlquilerDTO a : alquileres) {
                                     if (count == 6) {
                                         break;
                                     }
@@ -186,14 +178,14 @@
                                     <h3 class="product-card-title"><%= a.getNombreProducto()%></h3>
                                 </div>
                                 <div class="product-card-details">
-                                    <span>Retorno: <%= a.getAlquiler().getFechaPactada()%></span>
+                                    <span>Retorno: <%= a.getFechaPactada()%></span>
                                 </div>
                             </article>
                             <%
                                         count++;
                                     } // Cierre For Alquileres
                                 } // Cierre Else Alquileres
-%>
+                            %>
                         </div>
                     </section>
                 </div>  

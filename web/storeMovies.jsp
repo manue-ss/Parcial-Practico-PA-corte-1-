@@ -46,7 +46,7 @@
                             </a>
                         </li>
                         <li class="menu-item menu-item-static">
-                            <a href="rentals.jsp" class="menu-link">
+                            <a href="RentalServlet" class="menu-link">
                                 <i class="bx bx-movie-play"></i>
                                 <span>Alquileres</span>
                             </a>

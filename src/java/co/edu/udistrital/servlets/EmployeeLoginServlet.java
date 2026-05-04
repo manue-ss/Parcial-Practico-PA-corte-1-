@@ -51,7 +51,7 @@ public class EmployeeLoginServlet extends HttpServlet {
             String username = request.getParameter("username");
             String pass = request.getParameter("password");
 
-            Empleado emp = authService.autenticar(username, pass);
+            Empleado emp = authService.ejecutar(username, pass);
 
             if (emp != null) {
                 HttpSession session = request.getSession(true);

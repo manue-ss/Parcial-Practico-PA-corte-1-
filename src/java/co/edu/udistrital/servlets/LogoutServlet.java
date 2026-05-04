@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpSession;
  * cliente desconectándolo del context object de la petición HTTP.
  *
  * @author Manuel Salazar
- * @since 0.1
+ * @since 0.2
  */
 @WebServlet(name = "LogoutServlet", urlPatterns = {"/LogoutServlet"})
 public class LogoutServlet extends HttpServlet {

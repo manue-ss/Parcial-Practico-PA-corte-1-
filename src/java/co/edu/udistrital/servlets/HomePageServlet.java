@@ -4,15 +4,13 @@
  */
 package co.edu.udistrital.servlets;
 
-import co.edu.udistrital.model.dto.AlquilerDetalleDTO;
-import co.edu.udistrital.model.entities.Alquiler;
-import co.edu.udistrital.model.entities.Cliente;
-import co.edu.udistrital.model.entities.Juego;
-import co.edu.udistrital.model.entities.Pelicula;
-import co.edu.udistrital.model.entities.Producto;
+import co.edu.udistrital.model.dto.AlquilerDTO;
+import co.edu.udistrital.model.dto.ClienteDTO;
+import co.edu.udistrital.model.dto.ProductoDTO;
 import co.edu.udistrital.model.repository.AlquilerRepository;
 import co.edu.udistrital.model.repository.JuegoRepository;
 import co.edu.udistrital.model.repository.PeliculaRepository;
+import co.edu.udistrital.model.service.CatalogoService;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -20,13 +18,15 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
+ * Controlador principal del Dashboard o portal de Cliente.
+ * Recopila y consolida productos novedosos y alquileres detallados del cliente 
+ * actual para renderizarlos en la vista principal (customerHomePage.jsp).
  *
- * @author Acer-Pc
+ * @author Manuel Salazar
+ * @since 0.2
  */
 @WebServlet(name = "HomePageServlet", urlPatterns = {"/HomePageServlet"})
 public class HomePageServlet extends HttpServlet {
@@ -43,61 +43,23 @@ public class HomePageServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        HttpSession session = request.getSession(false); // No crear sesión si no existe
+        HttpSession session = request.getSession(false);
 
-        // --- VALIDACIÓN DE SESIÓN EXPIRADA ---
         if (session == null || session.getAttribute("usuarioLogueado") == null) {
             response.sendRedirect("index.jsp?error=Sesion expirada o no iniciada");
             return;
         }
 
-        // Obtener repositorios del Contexto
         JuegoRepository jr = (JuegoRepository) getServletContext().getAttribute("juegoRepository");
         PeliculaRepository pr = (PeliculaRepository) getServletContext().getAttribute("peliculaRepository");
         AlquilerRepository ar = (AlquilerRepository) getServletContext().getAttribute("alquilerRepository");
 
-        // Obtener cliente de la sesión
-        Cliente cliente = (Cliente) session.getAttribute("usuarioLogueado");
+        ClienteDTO cliente = (ClienteDTO) session.getAttribute("usuarioLogueado");
 
-        // --- LÓGICA DE NOVEDADES (Mezcla de Juegos y Pelis) ---
-        List<Juego> listaJuegos = jr.getAll().reversed();
-        List<Pelicula> listaPeliculas = pr.getAll().reversed();
-        List<Producto> novedades = new ArrayList<>();
+        CatalogoService service = new CatalogoService(jr, pr, ar);
 
-        int lim = Math.min(6, listaJuegos.size() + listaPeliculas.size());
-        int maxIteraciones = Math.max(listaJuegos.size(), listaPeliculas.size());
-
-        for (int i = 0; i < maxIteraciones && novedades.size() < lim; i++) {
-            if (i < listaJuegos.size() && novedades.size() < lim) {
-                novedades.add(listaJuegos.get(i));
-            }
-            if (i < listaPeliculas.size() && novedades.size() < lim) {
-                novedades.add(listaPeliculas.get(i));
-            }
-        }
-
-        // --- LÓGICA DE ALQUILERES VIGENTES ---
-        List<Alquiler> misAlquileres = ar.getByCustomer(cliente.getId());
-        List<AlquilerDetalleDTO> listaParaVista = new ArrayList<>();
-
-        for (Alquiler a : misAlquileres) {
-            String nombre = "Desconocido";
-            String tipo = a.getIdProducto().startsWith("Jg") ? "Juego" : "Película";
-
-            if (tipo.equals("Juego")) {
-                Juego j = jr.getById(a.getIdProducto());
-                if (j != null) {
-                    nombre = j.getNombreProducto();
-                }
-            } else{
-                Pelicula p = pr.getById(a.getIdProducto());
-                if (p != null) {
-                    nombre = p.getNombreProducto();
-                }
-            }
-
-            listaParaVista.add(new AlquilerDetalleDTO(a, nombre, tipo));
-        }
+        List<ProductoDTO> novedades = service.getNovedades(6);
+        List<AlquilerDTO> listaParaVista = service.getAlquileresDetallados(cliente.getId());
 
         // Pasar datos al JSP
         request.setAttribute("novedades", novedades);

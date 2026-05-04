@@ -44,7 +44,7 @@ public class EmpleadoRepository extends BareRepository<Empleado> {
                         Statement.RETURN_GENERATED_KEYS)) {
                     psC.setString(1, empleado.getNombreUsuario());
                     psC.setString(2, empleado.getNombreCompleto());
-                    psC.setString(3, empleado.getContrasenia());
+                    psC.setString(3, empleado.getContraseniaHash());
                     psC.setString(4, empleado.getCorreo());
                     psC.setString(5, empleado.getTelefono());
                     psC.executeUpdate();
@@ -210,7 +210,7 @@ public class EmpleadoRepository extends BareRepository<Empleado> {
      * @return {@code true} si se confirmó la transacción.
      */
     public boolean update(Empleado empleado) {
-        String sqlCuenta = "UPDATE cuentas SET nombre = ?, contrasenia = ?, correo = ?, telefono = ? WHERE username = ?";
+        String sqlCuenta = "UPDATE cuentas SET nombre = ?, correo = ?, telefono = ? WHERE username = ?";
         String sqlCliente = "UPDATE empleados SET dni = ?, direccion = ?, cargo = ? WHERE id_cuenta = ?";
 
         try (Connection con = DriverManager.getConnection(Config.URL, Config.USER, Config.PASS)) {
@@ -218,10 +218,9 @@ public class EmpleadoRepository extends BareRepository<Empleado> {
 
             try (PreparedStatement psCue = con.prepareStatement(sqlCuenta)) {
                 psCue.setString(1, empleado.getNombreCompleto());
-                psCue.setString(2, empleado.getContrasenia());
-                psCue.setString(3, empleado.getCorreo());
-                psCue.setString(4, empleado.getTelefono());
-                psCue.setString(5, empleado.getNombreUsuario());
+                psCue.setString(2, empleado.getCorreo());
+                psCue.setString(3, empleado.getTelefono());
+                psCue.setString(4, empleado.getNombreUsuario());
                 psCue.executeUpdate();
             }
 

@@ -4,6 +4,8 @@ import co.edu.udistrital.model.dto.ClienteDTO;
 import co.edu.udistrital.model.entities.Cliente;
 import co.edu.udistrital.model.repository.ClienteRepository;
 import co.edu.udistrital.model.service.IniciarSesion;
+import co.edu.udistrital.util.ClienteMapper;
+import co.edu.udistrital.util.exceptions.LoginException;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -35,27 +37,46 @@ public class LoginServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
+        String mensaje = "";
 
-        // 1. OBTENER REPOSITORIOS (Verifica que no sean null en consola)
-        ClienteRepository cr = (ClienteRepository) getServletContext().getAttribute("clienteRepository");
+        try {
 
-        ClienteDTO loginDto = new ClienteDTO();
-        loginDto.setNombreUsuario(request.getParameter("username"));
-        loginDto.setContrasenia(request.getParameter("password"));
+            String user = request.getParameter("username");
+            String pass = request.getParameter("password");
 
-        IniciarSesion iniciarSesion = new IniciarSesion(cr);
-        Cliente clienteAutenticado = iniciarSesion.ejecutar(loginDto);
+            ClienteRepository cr = (ClienteRepository) getServletContext().getAttribute("clienteRepository");
+            if (cr == null) {
+                throw new RuntimeException("Repositorio no encontrado");
+            }
 
-        if (clienteAutenticado != null) {
-            HttpSession session = request.getSession();
-            session.setAttribute("usuarioLogueado", clienteAutenticado);
+            ClienteDTO loginDto = new ClienteDTO();
+            loginDto.setNombreUsuario(user != null ? user.trim() : "");
+            loginDto.setContrasenia(pass);
 
+            IniciarSesion service = new IniciarSesion(cr);
+            Cliente cliente = service.ejecutar(loginDto);
+
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                session.invalidate();
+            }
+            session = request.getSession(true);
+
+            ClienteDTO sessionDto = ClienteMapper.toDTO(cliente);
+            sessionDto.setContrasenia(null);
+            session.setAttribute("usuarioLogueado", sessionDto);
             response.sendRedirect("HomePageServlet");
+            return;
+        } catch (LoginException e) {
+            mensaje = e.getMessage();
 
-        } else {
-            request.setAttribute("errorLoginMessage", "Usuario o contraseña incorrectos");
-            request.getRequestDispatcher("index.jsp").forward(request, response);
+        } catch (IOException | RuntimeException e) {
+            log("Error en Login: ", e);
+            mensaje = "Error técnico en el sistema";
         }
+
+        request.setAttribute("errorLoginMessage", mensaje);
+        request.getRequestDispatcher("index.jsp").forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

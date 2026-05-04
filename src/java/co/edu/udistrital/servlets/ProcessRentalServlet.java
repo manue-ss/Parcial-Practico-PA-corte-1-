@@ -1,8 +1,11 @@
 package co.edu.udistrital.servlets;
 
+import co.edu.udistrital.model.dto.ClienteDTO;
 import co.edu.udistrital.model.entities.Cliente;
 import co.edu.udistrital.model.repository.*;
 import co.edu.udistrital.model.service.ProcesarAlquiler;
+import co.edu.udistrital.util.ClienteMapper;
+import co.edu.udistrital.util.exceptions.AlquilerException;
 import java.io.IOException;
 import java.time.LocalDate;
 import jakarta.servlet.ServletException;
@@ -11,7 +14,16 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.time.format.DateTimeParseException;
 
+/**
+ * Controlador que procesa el pago y asienta un nuevo contrato de Alquiler.
+ * Extrae la información de la sesión y del formulario de rentas para que 
+ * el servicio ProcesarAlquiler debite el dinero y actualice inventarios.
+ *
+ * @author Manuel Salazar
+ * @since 0.2
+ */
 @WebServlet(name = "ProcessRentalServlet", urlPatterns = {"/ProcessRentalServlet"})
 public class ProcessRentalServlet extends HttpServlet {
 
@@ -27,57 +39,46 @@ public class ProcessRentalServlet extends HttpServlet {
             return;
         }
 
-        // 2. Obtener Repositorios del Contexto (asegurando consistencia de datos)
+        // 2. Obtener Repositorios del Contexto (inyectados por el Listener)
         AlquilerRepository ar = (AlquilerRepository) getServletContext().getAttribute("alquilerRepository");
         ClienteRepository cr = (ClienteRepository) getServletContext().getAttribute("clienteRepository");
         JuegoRepository jr = (JuegoRepository) getServletContext().getAttribute("juegoRepository");
         PeliculaRepository pr = (PeliculaRepository) getServletContext().getAttribute("peliculaRepository");
 
-        // Inicialización de seguridad por si el Listener no ha corrido
-        if (ar == null) {
-            ar = new AlquilerRepository();
-        }
-        if (cr == null) {
-            cr = new ClienteRepository();
-        }
-        if (jr == null) {
-            jr = new JuegoRepository();
-        }
-        if (pr == null) {
-            pr = new PeliculaRepository();
-        }
-
-        // 3. Captura de datos
-        Cliente cliente = (Cliente) session.getAttribute("usuarioLogueado");
+        // 3. Captura de datos desde la sesión (DTO) y el formulario
+        ClienteDTO clienteSession = (ClienteDTO) session.getAttribute("usuarioLogueado");
         String idProducto = request.getParameter("idProducto");
         String fechaDevString = request.getParameter("fechaDevolucion");
 
         try {
-            LocalDate fechaDev = LocalDate.parse(fechaDevString);
-
-            // Instanciar el servicio con los repositorios
-            ProcesarAlquiler service = new ProcesarAlquiler(ar, cr, jr, pr);
-
-            // EJECUCIÓN: Pasamos el nombre de usuario porque es la llave del repositorio
-            String resultado = service.rentar(cliente.getId(), idProducto, fechaDev);
-
-            System.out.println(resultado);
-
-            if ("OK".equals(resultado)) {
-                // Éxito: Redirigir al historial de alquileres
-                response.sendRedirect("rentals.jsp");
-            } else {
-                // Error de negocio (saldo, stock, etc.): Volver con el mensaje
-                System.out.println("Fallo error de negocio");
-                request.setAttribute("error", resultado);
-                request.getRequestDispatcher("confirmarAlquiler.jsp?idProducto=" + idProducto).forward(request, response);
+            if (idProducto == null || fechaDevString == null || fechaDevString.isBlank()) {
+                throw new AlquilerException("Información de alquiler incompleta.");
             }
 
-        } catch (Exception e) {
-            System.err.println("CAUSA REAL DEL ERROR: " + e.getMessage());
-            e.printStackTrace();
+            LocalDate fechaDev = LocalDate.parse(fechaDevString);
 
-            request.setAttribute("error", "Error técnico: " + e.getMessage());
+            ProcesarAlquiler service = new ProcesarAlquiler(ar, cr, jr, pr);
+
+            service.rentar(clienteSession.getId(), idProducto, fechaDev);
+
+            Cliente clienteActualizado = cr.getById(clienteSession.getId());
+            ClienteDTO dtoRefrescado = ClienteMapper.toDTO(clienteActualizado);
+            dtoRefrescado.setContrasenia(null); // Seguridad
+            session.setAttribute("usuarioLogueado", dtoRefrescado);
+
+            response.sendRedirect("RentalServlet?success=true");
+
+        } catch (AlquilerException e) {
+            request.setAttribute("error", e.getMessage());
+            request.getRequestDispatcher("confirmarAlquiler.jsp?idProducto=" + idProducto).forward(request, response);
+
+        } catch (DateTimeParseException e) {
+            request.setAttribute("error", "Formato de fecha inválido.");
+            request.getRequestDispatcher("confirmarAlquiler.jsp?idProducto=" + idProducto).forward(request, response);
+
+        } catch (Exception e) {
+            log("Error crítico en RentProductServlet: ", e);
+            request.setAttribute("error", "Error interno del sistema: " + e.getMessage());
             request.getRequestDispatcher("confirmarAlquiler.jsp?idProducto=" + idProducto).forward(request, response);
         }
     }

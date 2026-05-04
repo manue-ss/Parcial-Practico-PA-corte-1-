@@ -3,10 +3,8 @@ package co.edu.udistrital.servlets;
 import co.edu.udistrital.model.dto.ClienteDTO;
 import co.edu.udistrital.model.repository.ClienteRepository;
 import co.edu.udistrital.model.service.RegistrarUsuario;
-import co.edu.udistrital.util.SignupValidator;
-import co.edu.udistrital.util.ValidationResult;
+import co.edu.udistrital.util.exceptions.SignupException;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -14,8 +12,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
+ * Controlador enfocado en el flujo de registro (Signup).
+ * Orquesta la transformación de formulario a DTO y lo envía a la lógica 
+ * de negocio para inserción (RegistrarUsuario).
  *
- * @author Acer-Pc
+ * @author Manuel Salazar
+ * @since 0.2
  */
 @WebServlet(name = "SignupServlet", urlPatterns = {"/SignupServlet"})
 public class SignupServlet extends HttpServlet {
@@ -32,33 +34,40 @@ public class SignupServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            ClienteDTO cliente = new ClienteDTO();
-            ClienteRepository repositorio = (ClienteRepository) getServletContext().getAttribute("clienteRepository");
 
-            cliente.setNombreCompleto(request.getParameter("name"));
-            cliente.setNombreUsuario(request.getParameter("username"));
-            cliente.setCorreo(request.getParameter("email"));
-            cliente.setTelefono(request.getParameter("phone"));
-            cliente.setContrasenia(request.getParameter("password"));
+        // 1. Obtener dependencias (centralizado)
+        ClienteRepository repo = (ClienteRepository) getServletContext().getAttribute("clienteRepository");
 
-            ValidationResult resultado = SignupValidator.validar(cliente, repositorio);
-            if (!resultado.isValido()) {
-                request.setAttribute("errorSignupMessage", resultado.getMensaje());
-                request.getRequestDispatcher("index.jsp").forward(request, response);
-                return;
-            } else {
-                // Validación pasó, proceder con registro
-                RegistrarUsuario registrar = new RegistrarUsuario(repositorio);
-                registrar.ejecutar(cliente);
-                // Éxito: redirigir o mostrar mensaje
-                request.setAttribute("successMessage", "Usuario registrado exitosamente. Inicia sesión.");
-                request.getRequestDispatcher("index.jsp").forward(request, response);
-            }
-            request.getRequestDispatcher("index.jsp").forward(request, response);
+        // 2. Mapeo de datos (Podrías crear un Mapper para esto luego)
+        ClienteDTO dto = new ClienteDTO();
+        dto.setNombreCompleto(request.getParameter("name"));
+        dto.setNombreUsuario(request.getParameter("username"));
+        dto.setCorreo(request.getParameter("email"));
+        dto.setTelefono(request.getParameter("phone"));
+        dto.setContrasenia(request.getParameter("password"));
 
+        // Variables para el flujo de salida
+        String mensaje;
+        String atributo = "successMessage";
+
+        try {
+            RegistrarUsuario registrar = new RegistrarUsuario(repo);
+            registrar.ejecutar(dto);
+            mensaje = "Usuario registrado exitosamente. Inicia sesión.";
+        } catch (SignupException e) {
+            mensaje = e.getMessage();
+            atributo = "errorSignupMessage";
+        } catch (Exception e) {
+            System.err.println("ERROR CRÍTICO: " + e.getMessage());
+            e.printStackTrace();
+
+            mensaje = "Ocurrió un error inesperado en el servidor. Intente más tarde.";
+            atributo = "errorSignupMessage";
         }
+
+        // 4. Único punto de salida para evitar IllegalStateException
+        request.setAttribute(atributo, mensaje);
+        request.getRequestDispatcher("index.jsp").forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
