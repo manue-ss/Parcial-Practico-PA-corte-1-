@@ -1,7 +1,6 @@
 package co.edu.udistrital.model.repository;
 
 import co.edu.udistrital.model.entities.Alquiler;
-import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -32,6 +31,7 @@ public class AlquilerRepository extends BareRepository<Alquiler> {
      * Añadir un alquiler a la base de datos del sistema.
      *
      * @param alquiler Objeto a registrar en la base de datos.
+     *
      * @return verdadero si la adicion fue exitosa, falso en caso contrario.
      */
     @Override
@@ -66,7 +66,8 @@ public class AlquilerRepository extends BareRepository<Alquiler> {
             con.commit();
             return true;
 
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             System.err.println("Error en guardado: " + e.getMessage());
             e.printStackTrace();
             return false;
@@ -80,7 +81,9 @@ public class AlquilerRepository extends BareRepository<Alquiler> {
      * uan seccion del codigo.
      *
      * @param rs Objeto RsultSet que contiene los datos de la base de datos.
+     *
      * @return El objeto de tipo Alquiler creado.
+     *
      * @throws SQLException
      */
     private Alquiler mapAlquiler(ResultSet rs) throws SQLException {
@@ -113,9 +116,10 @@ public class AlquilerRepository extends BareRepository<Alquiler> {
      * Obtiene los datos de un objeto alquiler desde una base de datos para
      * establecerlos en un onjeto del mismo tipo.
      *
-     * @param sql La sentencia SQL para la extraccion de datos.
+     * @param sql   La sentencia SQL para la extraccion de datos.
      * @param param Parametro que apunta a un dato o fila especifico de la base
-     * de datos.
+     *              de datos.
+     *
      * @return El objero de tipo Alquiler.
      */
     private Alquiler getAlquiler(String sql, Object param) {
@@ -130,7 +134,8 @@ public class AlquilerRepository extends BareRepository<Alquiler> {
                     return alq;
                 }
             }
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             System.err.println("Error en getById: " + e.getMessage());
             e.printStackTrace();
         }
@@ -142,6 +147,7 @@ public class AlquilerRepository extends BareRepository<Alquiler> {
      * Extrae un alquiler de la base de datos usando su id asociado.
      *
      * @param id Identificador del alquiler.
+     *
      * @return El objeto de tipo Alquiler o null si no extiste.
      */
     @Override
@@ -175,7 +181,8 @@ public class AlquilerRepository extends BareRepository<Alquiler> {
                 alquileres.add(alq);
             }
 
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             System.err.println("Error al obtener tododos los alquileres: " + e.getMessage());
         }
         return alquileres;
@@ -195,7 +202,8 @@ public class AlquilerRepository extends BareRepository<Alquiler> {
                 return rs.getInt(1);
             }
 
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             System.err.println("Error al verificar cantidad: " + e.getMessage());
         }
         return 0;
@@ -206,6 +214,7 @@ public class AlquilerRepository extends BareRepository<Alquiler> {
      * persona.
      *
      * @param idCliente Identificador único del cliente consultante.
+     *
      * @return Lista segregada de alquileres de la persona.
      */
     public List<Alquiler> getByCustomer(String idCliente) {
@@ -226,7 +235,8 @@ public class AlquilerRepository extends BareRepository<Alquiler> {
                     alquileres.add(alq);
                 }
             }
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             System.err.println("Error al obtener tododos los alquileres: " + e.getMessage());
         }
         return alquileres;
@@ -237,6 +247,7 @@ public class AlquilerRepository extends BareRepository<Alquiler> {
      * Retorna un alquiler cambiando su estado en la base de datos.
      *
      * @param id Identiiificador del alquiler a devolver.
+     *
      * @return Verdadero si se logró retornar.
      */
     public boolean returnAlquiler(String id) {
@@ -259,7 +270,8 @@ public class AlquilerRepository extends BareRepository<Alquiler> {
             int filasAfectadas = ps.executeUpdate();
             return filasAfectadas > 0;
 
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             System.err.println("Error en devolución con JOIN: " + e.getMessage());
             e.printStackTrace();
             return false;
@@ -274,8 +286,9 @@ public class AlquilerRepository extends BareRepository<Alquiler> {
      * como devuelto.
      *
      * @param id Identificador del alquiler a eliminar.
+     *
      * @return Verdadero si se elimino, falso en caso contrario. Ya sea por
-     * inexistencia del alquiler o un fallo en la ejcucion del metodo.
+     *         inexistencia del alquiler o un fallo en la ejcucion del metodo.
      */
     /*--------------->>D-Delete<<---------------*/
     /**
@@ -285,8 +298,9 @@ public class AlquilerRepository extends BareRepository<Alquiler> {
      * como devuelto.
      *
      * @param id Identificador del alquiler a remove.
+     *
      * @return Verdadero si se elimino, falso en caso contrario. Ya sea por
-     * inexistencia del alquiler o un fallo en la ejcucion del metodo.
+     *         inexistencia del alquiler o un fallo en la ejcucion del metodo.
      */
     public boolean remove(String id) {
         int idNumerico = Integer.parseInt(id.replaceAll("[^0-9]", ""));
@@ -300,7 +314,8 @@ public class AlquilerRepository extends BareRepository<Alquiler> {
 
             return filasAfectadas > 0;
 
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             System.err.println("Error al eliminar alquiler: " + e.getMessage());
             return false;
         }
@@ -335,7 +350,8 @@ public class AlquilerRepository extends BareRepository<Alquiler> {
                 }
             }
 
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             System.err.println("Error al identificar prefijo del producto: " + e.getMessage());
         }
 
